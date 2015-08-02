@@ -257,6 +257,18 @@ class Form
     Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix or @attrs['as'])
 
   ###*
+  @method inputs
+  @param [options={}] {Object} Object hash
+  @param fn {Function} Inner Input Fields
+  @return {String} HTML String built
+  ###
+  inputs: =>
+    options = _.first(arguments)
+    fn = _.last(arguments)
+
+    new Formtastic.Inputs(options, fn, @attrs['as']).render()
+
+  ###*
   @method label
   @param name {String} Humanized name of the field
   @param attrs {Object} Attributes passed to the label by :label_html
@@ -272,39 +284,6 @@ class Form
     ele = @createNode(cfg, true)
     ele.innerHTML = name + (if required then Formtastic.required_string else '')
     ele.outerHTML
-
-  ###*
-  ###
-  inputs: =>
-    options = _.first(arguments)
-    fn = _.last(arguments)
-    legend_html = ''
-
-    if !_.isFunction(options) and _.isObject(options)
-      legend_name = options['name'] or options['title']
-      if legend_name
-        legend = @createNode({tag: 'legend'}, true)
-        legend.innerHTML = legend_name
-        legend_html = legend.outerHTML
-
-      options = _.extend({}, options)
-      delete options['name']
-      delete options['title']
-
-    else if _.isString(options)
-      legend = @createNode({tag: 'legend'}, true)
-      legend.innerHTML = options
-      legend_html = legend.outerHTML
-      options = {}
-    else
-      options = {}
-
-    fieldset = @createNode( _.extend({tag: 'fieldset', class: 'inputs'}, options), true)
-    container = @createNode( _.extend({tag: 'ol'}), true)
-
-    container.innerHTML = fn.apply(window, [this])
-    fieldset.innerHTML = legend_html + container.outerHTML
-    fieldset.outerHTML
 
   ###*
   Giving access to the private function `dom` - given ability to overwrite if wanted by using the prototype.

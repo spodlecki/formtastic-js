@@ -120,7 +120,7 @@ describe '#input', ->
       describe 'when provided', ->
         it 'should be passed down to the label tag', ->
           @el = @form.input('title', label: "Kustom").replace("\n",'')
-          expect(@el).toEqual '<li class="string optional"><label class="label">Kustom</label><input name="blog[title]" placeholder="Kustom" type="text"></li>'
+          expect(@el).toEqual '<li id="blog_title_input" class="string optional input"><label for="blog_title" class="label">Kustom</label><input id="blog_title" name="blog[title]" placeholder="Kustom" type="text"></li>'
 
         it 'should not generate a label if false', ->
           @el = $(@form.input('title', label: false))

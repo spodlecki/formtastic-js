@@ -39,7 +39,76 @@ describe '#inputs', ->
 
       it 'should render nested inputs', ->
         expect(@el.find('ol li input[type="text"]').length).toEqual 1
+      it 'should render input with nested name', ->
+        expect(@el.find('ol li input[name="blog[author][login]"]').length).toEqual 1
 
-      it 'should render input with _attributes name', ->
-        console.log(@el)
-        expect(@el.find('ol li input[name="blog[author_attributes][login]"]').length).toEqual 1
+    describe 'when a :name or :title option is provided', ->
+      beforeEach ->
+        @object = Object.create({bam: 'bam'})
+        @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+        @form = new Formtastic(@object, @attrs, -> '')
+        @el = $(@form.inputs((f)->
+          c = []
+          c.push f.inputs({name: 'Option 1', id: 'a'}, (f2)-> f2.input('name'))
+          c.push f.inputs({title: 'Option 2', id: 'b'}, (f2)-> f2.input('name'))
+          c.push f.inputs('Option 3', (f2)-> f2.input('name'))
+          c.join('')
+        ))
+
+      it 'should render a fieldset with a legend inside the form', ->
+        expect(@el.find('legend').length).toEqual 3
+        expect($(@el.find('legend')[0]).text()).toEqual 'Option 1'
+        expect($(@el.find('legend')[1]).text()).toEqual 'Option 2'
+        expect($(@el.find('legend')[2]).text()).toEqual 'Option 3'
+
+    describe 'when other options are provided', ->
+      beforeEach ->
+        @object = Object.create({bam: 'bam'})
+        @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+        @form = new Formtastic(@object, @attrs, -> '')
+        @el = $(@form.inputs({id: 'hello', class: 'world'}, (f)-> 'hi'))
+
+      it 'should pass the options into the fieldset tag as attributes', ->
+        expect(@el.attr('id')).toEqual 'hello'
+        expect(@el.hasClass('world')).toBeTruthy()
+
+    describe 'without a block', ->
+      beforeEach ->
+        @object = Object.create({bam: 'bam'})
+        @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+        @form = new Formtastic(@object, @attrs, -> '')
+
+      describe 'with no args (quick forms syntax)', ->
+        beforeEach ->
+          @el = $(@form.inputs())
+
+        it 'renders the fieldset', ->
+          expect(@el[0].outerHTML).toEqual '<fieldset class="inputs"></fieldset>'
+
+    describe 'nesting', ->
+      beforeEach ->
+        @object = Object.create({bam: 'bam'})
+        @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+      describe "when not nested", ->
+        beforeEach ->
+          @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.input('login')))
+          @el = $('<div>'+@form.render()+'</div>')
+
+        it 'has a form > fieldset > ol > li', ->
+          expect(@el.find('form > fieldset > ol > li').length).toEqual 1
+
+      describe "when nested (with block)", ->
+        beforeEach ->
+          @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.inputs((f2)-> f2.input('login'))))
+          @el = $('<div>'+@form.render()+'</div>')
+
+        it "should wrap the nested inputs in an li block to maintain HTML validity", ->
+          expect(@el.find('form > fieldset.inputs > ol > li > fieldset.inputs > ol').length).toEqual 1
+
+      describe "when double nested", ->
+        beforeEach ->
+          @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.inputs((f2)-> f2.inputs((f3)->f3.input('login')))))
+          @el = $('<div>'+@form.render()+'</div>')
+
+        it "should wrap the nested inputs in an li block to maintain HTML validity", ->
+          expect(@el.find('form > fieldset.inputs > ol > li > fieldset.inputs > ol > li > fieldset.inputs > ol').length).toEqual 1

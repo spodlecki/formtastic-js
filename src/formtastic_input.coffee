@@ -9,6 +9,11 @@ class Formtastic.Input.Base
   ###
   merge_css_strings = Formtastic.merge_css_strings
 
+  # https://gist.github.com/cyberfox/1301931
+  humanize = (property)->
+    property.replace(/_/g, ' ').replace /(\w+)/g, (match) ->
+      match.charAt(0).toUpperCase() + match.slice(1)
+
   ###*
   Build a form-group using Bootstrap 3
   @method build_template
@@ -65,16 +70,15 @@ class Formtastic.Input.Base
   ###
   @get_inputs_by_config: (field, attrs, prefix)->
     as = translate_field(field, attrs)
-    attrs = _.extend({as: as}, attrs)
+    attrs = _.extend({as: as, prefix: prefix}, attrs)
 
     result = switch as
       when 'text', 'hidden', 'email', 'file', 'number', 'password', 'phone', 'string'
-        new Formtastic.Input.TextFieldHelper(field, attrs, prefix)
+        new Formtastic.Input.TextFieldHelper(field, attrs)
       when 'datetime_picker'
         throw("TODO datetime_picker")
       when 'boolean', 'bool', 'checkbox', 'check_box'
-        # @check_box_field(field, attrs)
-        throw("TODO "+as)
+        new Formtastic.Input.BooleanFieldHelper(field, attrs)
       when 'date'
         throw("TODO date")
       when 'date_picker'
@@ -86,7 +90,7 @@ class Formtastic.Input.Base
       when 'search'
         throw("TODO search")
       when 'select'
-        new Formtastic.Input.SelectFieldHelper(field, attrs, prefix)
+        new Formtastic.Input.SelectFieldHelper(field, attrs)
       when 'time'
         throw("TODO time")
       when 'url'
@@ -96,14 +100,14 @@ class Formtastic.Input.Base
 
     result.render()
 
-  constructor: (field, attrs, prefix)->
+  constructor: (field, attrs)->
     attrs = _.extend({required: false}, attrs)
 
     @field = field
     @attrs = attrs
     @as = attrs['as']
     @required = attrs['required']
-    @prefix = prefix
+    @prefix = attrs['prefix']
 
   ###*
   See `Formtastic.createNode`
@@ -133,12 +137,13 @@ class Formtastic.Input.Base
   @return {String} Outer HTML of Label DOM Node
   @public
   ###
-  label: =>
+  label: (dom)=>
     return null unless @label_name()
 
     defaults =
       tag: 'label'
       class: merge_css_strings(Formtastic.default_label_class, @attrs, 'label_html.class')
+      for: @generated_id()
 
     try
       delete @attrs.label_html['class']
@@ -148,10 +153,18 @@ class Formtastic.Input.Base
 
     ele = @createNode(label_config, true)
     ele.innerHTML = @label_name() + (if @required then Formtastic.required_string else '')
-    ele.outerHTML
 
+    return if dom then ele else ele.outerHTML
+
+  ###*
+  Returns label name based off :label option
+  @method label_name
+  @return {String}
+  @public
+  ###
   label_name: =>
-    @attrs['label']
+    return if @attrs['label'] is false
+    @attrs['label'] || humanize(@field)
 
   ###*
   @method input
@@ -168,6 +181,7 @@ class Formtastic.Input.Base
       name: @input_name()
       required: @required
       class: @constructor.default_input_class
+      id: @generated_id()
 
     delete defaults['required'] unless @required
 
@@ -178,15 +192,27 @@ class Formtastic.Input.Base
   ###*
   @method input_name
   @return {String} Built Input Name based on params
+  @public
   ###
   input_name: =>
-    if @prefix
-      _.template('<%= prefix %>[<%= name %>]')({prefix: @prefix, name: @field})
+    if @attrs['input_html'] and @attrs['input_html']['name']
+      @attrs['input_html']['name']
     else
-      _.template('<%= name %>')({prefix: @prefix, name: @field})
+      if @prefix
+        _.template('<%= prefix %>[<%= name %>]')({prefix: @prefix, name: @field})
+      else
+        _.template('<%= name %>')({prefix: @prefix, name: @field})
 
   input_value: =>
     null
+
+  generated_id: =>
+    return @attrs['id'] if @attrs['id']
+
+    _.compact([
+      @prefix,
+      @field
+    ]).join('_').replace(/\[|\]/,'_').replace(/\s/,'')
 
   ###*
   @method hint
@@ -208,7 +234,8 @@ class Formtastic.Input.Base
     wrapper_css = _.compact([
       @as,
       Formtastic.default_wrapper_class,
-      (if @required then 'required' else 'optional')
+      (if @required then 'required' else 'optional'),
+      'input'
     ]).join(' ')
     wrapper_css = merge_css_strings(wrapper_css, @attrs, 'wrapper_html.class')
 
@@ -219,6 +246,7 @@ class Formtastic.Input.Base
     defaults =
       tag: Formtastic.default_wrapper_tag
       class: wrapper_css
+      id: @generated_id()+'_input'
 
     wrapper_config = _.extend(defaults, @attrs['wrapper_html'])
     @createNode(wrapper_config, true)
