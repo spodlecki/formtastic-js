@@ -1,0 +1,26 @@
+{
+  "name": "formtastic-js",
+  "version": "0.0.1",
+  "authors": [
+    "s.podlecki@gmail.com"
+  ],
+  "description": "Formtastic (RoR) Port to JavaScript",
+  "main": "formtastic-js.js",
+  "keywords": [
+    "formtastic",
+    "forms",
+    "builder",
+    "jst"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.8.3"
+  }
+}
