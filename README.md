@@ -68,9 +68,9 @@ html = f.render();
 * TODO: `{as: 'date_select'}` - a date select.
 * TODO: `{as: 'datetime_select'}` - a date and time select.
 * TODO: `{as: 'time_select'}` - a time select. Default for column types: @:time@.
-* `{as: 'boolean|checkbox|bool|check_box'}` - a checkbox.
-* `{as: 'string'}` - a text field. Default type for all inputs.
-* `{as: 'number'}` - a text field (just like string).
+- `{as: 'boolean|checkbox|bool|check_box'}` - a checkbox.
+- `{as: 'string'}` - a text field. Default type for all inputs.
+- `{as: 'number'}` - a text field (just like string).
 * `{as: 'file'}` - a file field.
 * TODO: `{as: 'country'}` - a select menu of country names. Default for column types: name _"country"_
 * `{as: 'email'}` - a text field (just like string). Default for columns with name matching _"email"_. New in HTML5. Works on some mobile browsers already.
@@ -113,4 +113,12 @@ Formtastic.required_string = ' <strong data-toggle="tooltip" data-title="Require
   Inputs that just render themselves are empty fieldsets. The Rails version does DB Column look up
   ```
   f.inputs() //=> <fieldset class="inputs"></fieldset>
+  ```
+-
+  Numbers Input Field
+  ```
+  # Ruby
+  builder.input(:title, :as => :number, :input_html => { :in => 5..102 })
+  # JS
+  builder.input('title', as: 'number', input_html: { min: 5, max: 102 })
   ```

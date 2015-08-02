@@ -73,8 +73,10 @@ class Formtastic.Input.Base
     attrs = _.extend({as: as, prefix: prefix}, attrs)
 
     result = switch as
-      when 'text', 'hidden', 'email', 'file', 'number', 'password', 'phone', 'string'
+      when 'hidden', 'email', 'file', 'number', 'password', 'phone', 'string'
         new Formtastic.Input.TextFieldHelper(field, attrs)
+      when 'text'
+        throw("TODO: textarea")
       when 'datetime_picker'
         throw("TODO datetime_picker")
       when 'boolean', 'bool', 'checkbox', 'check_box'

@@ -2,21 +2,16 @@ describe '#boolean_field', ->
   describe 'generic', ->
     beforeEach ->
       @object = Object.create({bam: 'bam'})
-      @attrs = {label: 'World', as: 'blog', url: 'http://test.host', wrapper_html: {}, label_html: {}, input_html: {}}
+      @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
       @form = new Formtastic(@object, @attrs, (f)-> f.input('allow_comments', as: 'boolean'))
       @el = $('<div>'+@form.render()+'</div>')
 
     it 'is here', ->
       expect(@el.find('form').length).toEqual 1
 
-    it 'should have the input wrapper with class', ->
-      wrapper_class(@el, 'boolean')
-
-    it 'should have the input wrapper with class input', ->
-      wrapper_class(@el, 'input')
-
-    it 'should have the input wrapper id', ->
-      wrapper_id(@el, 'blog_allow_comments_input')
+    itBehavesLike('input_wrapper_with_class', 'boolean')
+    itBehavesLike('input_wrapper_with_class', 'input')
+    itBehavesLike('input_wrapper_with_id', 'blog_allow_comments_input')
 
     it 'should generate a label containing the input', ->
       expect(@el.find('label.label').length).toEqual 0

@@ -8,7 +8,7 @@ describe 'Formtastic', ->
   describe '#constructor', ->
     beforeEach ->
       @object = Object.create({bam: 'bam'})
-      @attrs = {label: 'World', as: 'Blog', url: 'http://test.host', wrapper_html: {}, label_html: {}, input_html: {}}
+      @attrs = {label: 'World', as: 'Blog', url: 'http://test.host'}
       @form = new Formtastic(@object, @attrs, -> 'call back methods here')
 
     it 'sets up a form HTMLNode', ->
