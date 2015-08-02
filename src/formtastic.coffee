@@ -151,36 +151,15 @@ class Form
   @template = '<%= label %><%= input %><%= hint %>'
 
   ###*
-  Used to return :as value from the configuration (mainly just convience)
-  @method field_prefix
-  @return {String} Returns :as from form config
-  @private
-  ###
-  field_prefix = ->
-    @attrs['as'] or null
-
-  ###*
-  Generate the fields name
-  @method field_name
-  @param field {String} Field name
-  @private
-  ###
-  field_name = (field)->
-    prefix = field_prefix.apply(this, [])
-    if prefix?
-      _.template('<%= prefix %>[<%= name %>]')({prefix: prefix, name: field})
-    else
-      _.template('<%= name %>')({prefix: prefix, name: field})
-
-  ###*
   Merge Default CSS Classes together along with custom specific
-  @method merge_css_classes
+  @method merge_css_strings
   @param default_css {String} CSS String to prefix
   @param attrs {Object} Attributes passed on through from initial config
   @param path {String} Path to attr value, ex: `label_html.class`
   @return {String} Merged CSS Class value
+  @static
   ###
-  merge_css_classes = (default_css, attrs, path)->
+  @merge_css_strings: (default_css, attrs, path)->
     try
       # Look into replacing eval.
       other_css = eval('attrs.'+path)
@@ -193,6 +172,13 @@ class Form
 
     catch
       default_css
+
+  ###*
+  See static method `merge_css_strings`
+  @method merge_css_strings
+  @private
+  ###
+  merge_css_strings = @merge_css_strings
 
   ###*
   Build an HTML DOM Node and either returns DOMNode or Outer HTML based on 2nd param.
@@ -223,7 +209,7 @@ class Form
   ###
   form = (attrs)->
     attrs['action'] ||= attrs['url']
-    css_class = merge_css_classes(@constructor.default_form_class, attrs, 'class')
+    css_class = merge_css_strings(@constructor.default_form_class, attrs, 'class')
     delete attrs['class']
 
     attrs = _.extend({tag: 'form', action: @constructor.default_form_action, class: css_class}, attrs)
@@ -234,96 +220,7 @@ class Form
     delete attrs['url']
     delete attrs['label_html']
     delete attrs['hint']
-    dom(attrs, true)
-
-  ###*
-  Build a form-group using Bootstrap 3
-  @method build_template
-  @param builder {Object} Object returned from input methods
-  @returns {String} Compiled DOM Node based on template
-  @private
-  ###
-  build_template = (builder)->
-    container = dom(builder.wrapper, true)
-    template = _.template(@constructor.template)
-    container.innerHTML = template({input: builder['input'], label: builder['label'], hint: builder['hint']})
-    container.outerHTML
-
-  ###*
-  Determine field type (`:as`) automagically by reading the field's name.
-
-  @example
-    =f.input('password') // turns into a password field
-    =f.input('password_confirmation') // turns into a password field
-    =f.input('post_id') // turns into a number field
-    =f.input('categories', collection: [{value: '1', text: 'Green'}, {value: '2', text: 'Yellow'}]) // turns into a select field
-
-  @method translate_field
-  @param field {String} String value of field name
-  @param attributes {Object} Attributes being passed to the builder
-  @return {String} Returns autotranslated field type (`:as`)
-  @private
-  ###
-  translate_field = (field, attributes)->
-    attributes = _.extend({}, attributes)
-    as = attributes['as']
-
-    return as if as
-    return if /^(.+\_)?password(\_.+)?$/.test(field)
-      'password'
-    else if /^.+\_id$/.test(field)
-      'number'
-    else if typeof(attributes['collection']) != 'undefined' and attributes['collection'].length > 0
-      'select'
-    else if /^(.+)?(phone|fax)$/.test(field)
-      'phone'
-    else if /^(.+)?email(.+)?$/.test(field)
-      'email'
-    else
-      @constructor.default_input_type
-
-
-  ###*
-  Determines field type based on `:as` declaration and other translations. (See specs for detailed information)
-
-  @method get_inputs_by_config
-  @param field {String} String value of field name
-  @param attributes {Object} Attributes being passed to the builder
-  @private
-  ###
-  get_inputs_by_config = (field, attributes)->
-    as = translate_field.apply(this, [field, attributes])
-    attributes = _.extend({as: as}, attributes)
-
-    result = switch as
-      when 'text', 'hidden', 'email', 'file', 'number', 'password', 'phone'
-        @input_field(field, attributes)
-      when 'string'
-        @text_field(field, attributes)
-      when 'datetime_picker'
-        throw("TODO datetime_picker")
-      when 'boolean', 'bool', 'checkbox', 'check_box'
-        @check_box_field(field, attributes)
-      when 'date'
-        throw("TODO date")
-      when 'date_picker'
-        throw("TODO date_picker")
-      when 'radio'
-        throw("TODO radio")
-      when 'range'
-        throw("TODO range")
-      when 'search'
-        throw("TODO search")
-      when 'select'
-        @select_field(field, attributes)
-      when 'time'
-        throw("TODO time")
-      when 'url'
-        throw("TODO url")
-      else
-        throw new Error('\''+as+'\' is not a valid field type.')
-
-    result
+    @createNode(attrs, true)
 
   constructor: (object, attrs, fn) ->
     @attrs = attrs
@@ -343,35 +240,6 @@ class Form
     @el.outerHTML
 
   ###*
-  @method label
-  @param name {String} Humanized name of the field
-  @param attrs {Object} Attributes passed to the label by :label_html
-  @return {String} Outer HTML of Label DOM Node
-  @public
-  ###
-  label: (name, attrs)=>
-    return null unless name
-    cfg = _.extend({required: false, tag: 'label', class: @constructor.default_label_class}, attrs)
-    required = cfg['required']
-    delete cfg['required']
-
-    ele = @createNode(cfg, true)
-    ele.innerHTML = name + (if required then @constructor.required_string else '')
-    ele.outerHTML
-
-  ###*
-  @method hint
-  @param text {String} String for hint
-  @return {String} Outer HTML of Hint DOM Node
-  @public
-  ###
-  hint: (text)=>
-    return '' unless text
-    hint = @createNode({tag: @constructor.default_hint_tag, class: @constructor.default_hint_class}, true)
-    hint.innerHTML = text
-    hint.outerHTML
-
-  ###*
   ```
   // Generate Text Input
   =f.input('name', {label: "Full Name", wrapper_html: {...}, input_html: {...}, label_html: {...}})
@@ -384,9 +252,26 @@ class Form
   @return {String} HTML String of built form input and label
   @public
   ###
-  input: (field, attributes) =>
+  input: (field, attributes, prefix) =>
     throw new Error("Required Parameter Missing: 'field'") unless field
-    get_inputs_by_config.apply(this, [field, attributes])
+    Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix or @attrs['as'])
+
+  ###*
+  @method label
+  @param name {String} Humanized name of the field
+  @param attrs {Object} Attributes passed to the label by :label_html
+  @return {String} Outer HTML of Label DOM Node
+  @public
+  ###
+  label: (name, attrs)=>
+    return null unless name
+    cfg = _.extend({required: false, tag: 'label', class: Formtastic.default_label_class}, attrs)
+    required = cfg['required']
+    delete cfg['required']
+
+    ele = @createNode(cfg, true)
+    ele.innerHTML = name + (if required then Formtastic.required_string else '')
+    ele.outerHTML
 
   ###*
   ###
@@ -422,87 +307,6 @@ class Form
     fieldset.outerHTML
 
   ###*
-  Generates the HTML for the input group. Overwrite this method to make your own HTML Format or simply overwrite property `template`
-
-  @method generate
-  @param builder {Object} Hash that is returned by Formtastic.Helpers
-  @param attributes {Object} Attributes passed to build the input field
-  @return {String} HTML String
-  ###
-  generate: (builder, attributes)=>
-    build_template.apply(this, [builder, attributes])
-
-  ###*
-  When creating individual builders, use this.getConfig(field, attributes) to receive information
-  about the input and label.
-
-  @example
-  ```javascript
-  o = {}
-  c = new Formtastic(o)
-  c.getConfig('name', {label: 'Hi'})
-  // {label: {config: {...}, name: 'Hi'}, input: {config: {...}, name: 'name'}, as: 'text', hint: '', attributes: {...}}
-  ```
-  @method getConfig
-  @param field {String} Name of field
-  @param attributes {Object} Attributes to be used in the configuration
-  @return {Object} (see example)
-  ###
-  getConfig: (field, attributes)=>
-    # Built and split out initial attributes
-    attributes = _.extend({as: 'string', required: false}, attributes)
-    as = attributes['as']
-    required = attributes['required']
-
-    # WRAPPER
-    wrapper_css = _.compact([as, @constructor.default_wrapper_class, (if required then 'required' else 'optional')]).join(' ')
-    wrapper_css = merge_css_classes(wrapper_css, attributes, 'wrapper_html.class')
-    try
-      delete attributes.wrapper_html['class']
-    catch
-    wrapper_config = _.extend({tag: @constructor.default_wrapper_tag, class: wrapper_css}, attributes['wrapper_html'])
-
-    # LABEL
-    label_css = merge_css_classes(@constructor.default_label_class, attributes, 'label_html.class')
-    try
-      delete attributes.label_html['class']
-    catch
-    label_config = _.extend({required: required, class: label_css}, attributes['label_html'])
-
-    # INPUT
-    input_config = _.extend({required: required, class: @constructor.default_input_class}, attributes['input_html'])
-
-    unless required
-      delete label_config['required']
-      delete input_config['required']
-
-    label_name = attributes['label']
-    name = field_name.apply(this, [field])
-
-    delete attributes['wrapper_html']
-    delete attributes['label_html']
-    delete attributes['input_html']
-    delete attributes['label']
-    delete attributes['required']
-
-    label =
-      config: label_config
-      name: label_name
-
-    input =
-      config: input_config
-      name: name
-
-    {
-      attributes: attributes
-      wrapper: wrapper_config
-      label: label
-      input: input
-      hint: attributes['hint']
-      as: as
-    }
-
-  ###*
   Giving access to the private function `dom` - given ability to overwrite if wanted by using the prototype.
 
   @example
@@ -519,10 +323,13 @@ class Form
   @param attributes {Object} Key/Value pair for all HTML Attributes
   @param [dom_node=false] {Boolean} Determine wether to return DOMNode or String
   @return {Mixed}
+  @static
   ###
-  createNode: =>
+  @createNode: =>
     dom.apply(this, arguments)
 
+  createNode: =>
+    @constructor.createNode.apply(this, arguments)
 
 for own key, fn of Formtastic.Inputs
   Form.prototype[key] = fn

@@ -156,7 +156,7 @@ describe '#input', ->
     describe ':wrapper_html option', ->
       describe 'when provided', ->
         it 'should be passed down to the li tag', ->
-          @el = $(@form.input('title', wrapper_html: {id: 'another_id'}))
+          @el = $(@form.input('title', {wrapper_html: {id: 'another_id'}}))
           expect(@el.attr('id')).toEqual 'another_id'
 
         it 'should append given classes to li default classes', ->

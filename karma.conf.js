@@ -22,10 +22,10 @@ module.exports = function(config) {
     files: [
         'bower_components/jquery/dist/jquery.min.js',
         'bower_components/underscore/underscore-min.js',
-        'src/inputs/*.coffee',
         'src/*.coffee',
-        'spec/src/inputs/*.coffee',
-        'spec/src/*.coffee'
+        'src/inputs/*.coffee',
+        'spec/src/*.coffee',
+        'spec/src/inputs/*.coffee'
     ],
 
 

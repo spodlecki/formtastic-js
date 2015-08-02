@@ -10,16 +10,29 @@ str = f.text_field()
 // str.input => DOM String for Input
 // str.wrapper => Attributes for wrapper (Object)
 ```
-@for Formtastic
-@method text_field
+@class TextFieldHelper
+@module Formtastic.Input
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
-@returns {Object} `ret.label` and `ret.input` are both html strings
 ###
 
 window.Formtastic ||= {}
 window.Formtastic.Inputs ||= {}
 
-Formtastic.Inputs.text_field = (field, attributes)->
-  attributes = _.extend(attributes, {input_html: {type: 'text'} })
-  @input_field(field, attributes)
+class TextFieldHelper extends Formtastic.Input.Base
+  constructor: (field, attributes, prefix)->
+    super(field, attributes, prefix)
+
+window.Formtastic.Input.TextFieldHelper = TextFieldHelper
+
+
+###*
+@for Formtastic
+@method text_field
+@param field {String} Name of the field
+@param attributes {Object} Field Attributes
+###
+window.Formtastic.Inputs.text_field = (field, attrs)->
+  attrs = _.extend({input_html: {}, attrs})
+  attrs['input_html']['type'] = 'text'
+  @input(field, attrs)
