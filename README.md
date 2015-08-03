@@ -18,7 +18,7 @@ Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by th
 
 ### Usage
 
-_Examples in [/example/](./tree/master/example) contain a normal Formtastic version along with a Bootstrap 3 version._
+_Examples in dir contain a normal Formtastic version along with a Bootstrap 3 version._
 
 **JavaScript**
 ```javascript
