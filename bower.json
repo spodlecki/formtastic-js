@@ -5,9 +5,7 @@
     "s.podlecki@gmail.com"
   ],
   "description": "Formtastic (RoR) Port to JavaScript",
-  "main": [
-    "./dist/formtastic-js.js",
-  ],
+  "main": "./dist/formtastic-js.js",
   "keywords": [
     "formtastic",
     "forms",
