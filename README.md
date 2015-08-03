@@ -18,6 +18,8 @@ Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by th
 
 ### Usage
 
+_Examples in [/example/](./tree/master/example) contain a normal Formtastic version along with a Bootstrap 3 version._
+
 **JavaScript**
 ```javascript
 (function(root) {
@@ -30,10 +32,20 @@ Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by th
         bf.push(b.input('title'));
         bf.push(b.input('body', {as: 'text'}));
         bf.push(b.input('section'));
+
         // bf.push(b.input('publication_state', {as: 'radio'}));
         bf.push(b.input('category'));
+        bf.push(b.input('colors', {as: 'select', collection: [{value: '1', text: 'Blue'}, {value: '2', text: 'Green'}, {value: '3', text: 'Red'}]}));
+        bf.push(b.input('more_colors', {as: 'select', collection: [['Blue', 1], ['Green', 2], ['Red', 3]]}));
         bf.push(b.input('allow_comments', {as: 'checkbox', label: "Allow commenting on this article"}));
-        bf.push(b.input('body'));
+        bf.push(b.input('body', {as: 'text'}));
+
+        bf.push(b.inputs('Private', {for: 'pm'}, function(b2) {
+          var b = [];
+          b.push(b2.input('private_category'));
+          b.push(b2.input('private_colors', {as: 'select', collection: [{value: '1', text: 'Blue'}, {value: '2', text: 'Green'}, {value: '3', text: 'Red'}]}));
+          return b.join("\n");
+        }));
         return bf.join("\n");
       })
     );
@@ -42,8 +54,8 @@ Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by th
       f.inputs("Advanced", function(b) {
         var bf = [];
         bf.push(b.input('keywords', {required: false, hint: "Example: ruby, rails, forms"}));
-        bf.push(b.input('extract', {required: false}));
-        bf.push(b.input('description', {required: false}));
+        bf.push(b.input('password', {required: false, input_html: {value: 'hello'}}));
+        bf.push(b.input('password_confirmation', {required: false, input_html: {value: 'hello'}}));
         bf.push(b.input('url_title', {required: false}));
         return bf.join("\n");
       })
@@ -52,8 +64,8 @@ Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by th
     c.push(
       f.inputs({name: "Author", for: 'author'}, function(b) {
         var bf = [];
-        bf.push(b.input('first_name'));
-        bf.push(b.input('last_name'));
+        bf.push(b.input('hidden', {as: 'hidden'}));
+        bf.push(b.input('search'));
         return bf.join("\n");
       })
     );
