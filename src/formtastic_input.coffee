@@ -1,10 +1,6 @@
-this.Formtastic ||= {}
-this.Formtastic.Input ||= {}
-this.Formtastic.Inputs ||= {}
-
 ###*
 @class Base
-@module Formtastic.Input
+@module FormtasticInput
 @param object {Object} Backbone Model or Hash
 @param attributes {Object} Attributes to pass on to the <form> element
 @param fn {Function} Callback (includes html and inputs being built)
@@ -91,33 +87,23 @@ class InputBase
     as = translate_field(field, attrs)
     attrs = _.extend({as: as, prefix: prefix}, attrs)
 
+    ###*
+    TODO:
+      datetime_picker, date, date_picker, radio, range, time
+    ###
     result = switch as
       when 'email', 'file', 'number', 'password', 'phone', 'string', 'url', 'search'
-        new Formtastic.Input.StringFieldHelper(field, attrs)
+        new FormtasticInput.StringFieldHelper(field, attrs)
       when 'hidden'
-        new Formtastic.Input.HiddenFieldHelper(field, attrs)
+        new FormtasticInput.HiddenFieldHelper(field, attrs)
       when 'text'
-        new Formtastic.Input.TextFieldHelper(field, attrs)
-      when 'datetime_picker'
-        throw("TODO datetime_picker")
+        new FormtasticInput.TextFieldHelper(field, attrs)
       when 'boolean', 'bool', 'checkbox', 'check_box'
-        new Formtastic.Input.BooleanFieldHelper(field, attrs)
-      when 'date'
-        throw("TODO date")
-      when 'date_picker'
-        throw("TODO date_picker")
-      when 'radio'
-        throw("TODO radio")
-      when 'range'
-        throw("TODO range")
+        new FormtasticInput.BooleanFieldHelper(field, attrs)
       when 'select'
-        new Formtastic.Input.SelectFieldHelper(field, attrs)
-      when 'time'
-        throw("TODO time")
+        new FormtasticInput.SelectFieldHelper(field, attrs)
       else
         throw new Error('\''+as+'\' is not a valid field type.')
-
-    result.render()
 
   constructor: (field, attrs)->
     attrs = _.extend({required: false}, attrs)
@@ -144,7 +130,7 @@ class InputBase
   ###
   render: =>
     result =
-      label: @label()
+      label: @_label_node()
       input: @input()
       hint: @hint()
       wrapper: @wrapper()
@@ -156,7 +142,8 @@ class InputBase
   @return {String} Outer HTML of Label DOM Node
   @public
   ###
-  label: (dom)=>
+
+  _label_node: (dom)=>
     return null unless @label_name()
 
     defaults =
@@ -294,4 +281,4 @@ class InputBase
   generate: (builder)=>
     build_template.apply(this, [builder])
 
-this.Formtastic.Input.Base = InputBase
+FormtasticInput.Base = InputBase

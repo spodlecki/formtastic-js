@@ -109,6 +109,45 @@ window.semantic_form_for = (object, form_attributes, fn)->
 * TODO: `{as: 'range'}` - a slider field.
 * TODO: `{as: 'datalist'}` - a text field with a accompanying "datalist tag":https://developer.mozilla.org/en/docs/Web/HTML/Element/datalist which provides options for autocompletion
 
+### Form Helpers
+
+Those really helpful form_for helpers are also available along side the `input` method.
+
+**`//` indicates it has been implemented**
+
+```
+=semantic_form_for({}, {as: 'dummy'}, function(f) {
+  var c = [
+    f.check_box :field, //
+    f.color_field :field,
+    f.date_field :field,
+    f.datetime_field :field,
+    f.datetime_local_field :field,
+    f.email_field :field, //
+    f.fields_for :field,
+    f.file_field :field, //
+    f.form_for :field,
+    f.hidden_field :field, //
+    f.label :field, //
+    f.month_field :field,
+    f.number_field :field, //
+    f.password_field :field, //
+    f.phone_field :field, //
+    f.radio_button :field,
+    f.range_field :field,
+    f.search_field :field, //
+    f.telephone_field :field, //
+    f.text_area :field, //
+    f.text_field :field, //
+    f.time_field :field,
+    f.url_field :field, //
+    f.week_field :field
+  ];
+  return c.join("\n");
+});
+
+```
+
 ### Templating
 
 By default follows the original Formtastic Rails Gem. However, alot of people use the forked version, [formtastic-bootstrap3](https://github.com/nickl-/formtastic-bootstrap3). This JS Port uses Underscore's Templating system `_.template()` to allow custom templates.
@@ -181,7 +220,8 @@ Formtastic.default_hint_tag = 'p';
   end
   # JS n/a
   ```
-
+-
+  **JavaScript does not currently set the value automatically**
 
 ### Development
 

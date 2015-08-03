@@ -1,16 +1,12 @@
-this.Formtastic ||= {}
-this.Formtastic.Input ||= {}
-this.Formtastic.Inputs ||= {}
-
 ###*
 @class HiddenFieldHelper
-@module Formtastic.Input
+@module FormtasticInput
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
 
-class HiddenFieldHelper extends Formtastic.Input.Base
-  label: =>
+class HiddenFieldHelper extends FormtasticInput.Base
+  _label_node: =>
     null
 
   wrapper: =>
@@ -18,15 +14,4 @@ class HiddenFieldHelper extends Formtastic.Input.Base
     node.style = "display: none;"
     node
 
-this.Formtastic.Input.HiddenFieldHelper = HiddenFieldHelper
-
-
-###*
-@for Formtastic
-@method string_field
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
-###
-this.Formtastic.Inputs.hidden_field = (field, attrs)->
-  attrs = _.extend({as: 'hidden'}, attrs)
-  @input(field, attrs)
+FormtasticInput.HiddenFieldHelper = HiddenFieldHelper

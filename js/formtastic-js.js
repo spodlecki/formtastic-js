@@ -1,4 +1,28 @@
 (function() {
+  var BooleanFieldHelper, Form, FormFieldset, FormtasticHelpers, FormtasticInput, FormtasticInputs, HiddenFieldHelper, InputBase, SelectFieldHelper, StringFieldHelper, TextFieldHelper, extend,
+    hasProp = {}.hasOwnProperty,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  this.Formtastic || (this.Formtastic = {});
+
+  FormtasticInput = {};
+
+  FormtasticInputs = {};
+
+  FormtasticHelpers = {};
+
+  extend = function(src, dest) {
+    var fn, key, results;
+    results = [];
+    for (key in src) {
+      if (!hasProp.call(src, key)) continue;
+      fn = src[key];
+      results.push(dest.prototype[key] = fn);
+    }
+    return results;
+  };
+
   _.mixin({
     isBlank: function(object) {
       switch (typeof object) {
@@ -15,18 +39,209 @@
     chain: false
   });
 
-}).call(this);
 
-(function() {
-  var Form, base, base1, fn, key, ref,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  @for Formtastic
+  @method check_box
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
 
-  this.Formtastic || (this.Formtastic = {});
+  FormtasticHelpers.check_box = function(field, attrs) {
+    attrs = _.extend({
+      as: 'boolean'
+    }, attrs);
+    return this.input(field, attrs);
+  };
 
-  (base = this.Formtastic).Input || (base.Input = {});
 
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  /**
+  @for Formtastic
+  @method email_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.email_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'email'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method file_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.file_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'file'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method string_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.hidden_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'hidden'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method label
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.label = function(name, attrs) {
+    var cfg, ele, required;
+    if (!name) {
+      return null;
+    }
+    cfg = _.extend({
+      required: false,
+      tag: 'label',
+      "class": Formtastic.default_label_class
+    }, attrs);
+    required = cfg.required;
+    delete cfg.required;
+    ele = this.createNode(cfg, true);
+    ele.innerHTML = name + (required ? Formtastic.required_string : '');
+    return ele.outerHTML;
+  };
+
+
+  /**
+  @for Formtastic
+  @method number_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.number_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'number'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method password_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.password_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'password'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method search_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.search_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'search'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method select_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.select = function(field, attrs) {
+    attrs = _.extend({
+      as: 'select'
+    }, attrs);
+    return this.input(field, attrs);
+  };
+
+
+  /**
+  @for Formtastic
+  @method telephone_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.phone_field = FormtasticHelpers.telephone_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'phone'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method text_area
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.text_area = function(field, attrs) {
+    attrs = _.extend({}, attrs);
+    attrs.as = 'text';
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method text_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.text_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'string'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
+
+
+  /**
+  @for Formtastic
+  @method text_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  FormtasticHelpers.url_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'url'
+    }, attrs);
+    return this.input(field, attrs, void 0, true);
+  };
 
 
   /**
@@ -47,7 +262,7 @@
     @type Object
     @default {}
      */
-    var dom, form, merge_css_strings;
+    var dom, form, merge_css_strings, set_callback, set_options;
 
     Form.builders = {};
 
@@ -165,11 +380,11 @@
     /**
     Default Form Action for all Formtastic forms
     @property default_form_action
-    @default 'javascript:void(0);'
+    @default '#'
     @type String
      */
 
-    Form.default_form_action = 'javascript:void(0);';
+    Form.default_form_action = '#';
 
 
     /**
@@ -289,16 +504,37 @@
       return this.createNode(attrs, true);
     };
 
-    function Form(object, attrs, fn) {
+    set_options = function(attrs) {
+      if (_.isFunction(attrs)) {
+        return {};
+      } else if (_.isObject(attrs)) {
+        return attrs;
+      } else if (_.isString(attrs)) {
+        return {
+          as: attrs
+        };
+      } else {
+        return {};
+      }
+    };
+
+    set_callback = function(fn) {
+      if (_.isFunction(fn)) {
+        return fn;
+      } else {
+        return null;
+      }
+    };
+
+    function Form(object, attrs) {
       this.createNode = bind(this.createNode, this);
-      this.label = bind(this.label, this);
       this.inputs = bind(this.inputs, this);
       this.input = bind(this.input, this);
       this.render = bind(this.render, this);
-      this.attrs = attrs;
-      this.el = form.apply(this, [attrs]);
+      this.attrs = set_options(attrs);
+      this.el = form.apply(this, [this.attrs]);
       this.object = object;
-      this.callback = fn;
+      this.callback = set_callback(_.last(arguments));
     }
 
 
@@ -330,11 +566,17 @@
     @public
      */
 
-    Form.prototype.input = function(field, attributes, prefix) {
+    Form.prototype.input = function(field, attributes, prefix, raw) {
+      var i;
       if (!field) {
         throw new Error("Required Parameter Missing: 'field'");
       }
-      return Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix || this.attrs.as);
+      i = FormtasticInput.Base.get_inputs_by_config(field, attributes, prefix || (this.attrs && this.attrs.as));
+      if (raw) {
+        return i.input();
+      } else {
+        return i.render();
+      }
     };
 
 
@@ -349,33 +591,7 @@
       var fn, options;
       options = _.first(arguments);
       fn = _.last(arguments);
-      return new Formtastic.Inputs(options, fn, this.attrs.as).render();
-    };
-
-
-    /**
-    @method label
-    @param name {String} Humanized name of the field
-    @param attrs {Object} Attributes passed to the label by :label_html
-    @return {String} Outer HTML of Label DOM Node
-    @public
-     */
-
-    Form.prototype.label = function(name, attrs) {
-      var cfg, ele, required;
-      if (!name) {
-        return null;
-      }
-      cfg = _.extend({
-        required: false,
-        tag: 'label',
-        "class": Formtastic.default_label_class
-      }, attrs);
-      required = cfg.required;
-      delete cfg.required;
-      ele = this.createNode(cfg, true);
-      ele.innerHTML = name + (required ? Formtastic.required_string : '');
-      return ele.outerHTML;
+      return new FormtasticInputs(options, fn, this.attrs.as).render();
     };
 
 
@@ -411,31 +627,14 @@
 
   })();
 
-  ref = Formtastic.Inputs;
-  for (key in ref) {
-    if (!hasProp.call(ref, key)) continue;
-    fn = ref[key];
-    Form.prototype[key] = fn;
-  }
+  extend(FormtasticHelpers, Form);
 
-  window.Formtastic = Form;
-
-}).call(this);
-
-(function() {
-  var InputBase, base, base1,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  this.Formtastic = Form;
 
 
   /**
   @class Base
-  @module Formtastic.Input
+  @module FormtasticInput
   @param object {Object} Backbone Model or Hash
   @param attributes {Object} Attributes to pass on to the <form> element
   @param fn {Function} Callback (includes html and inputs being built)
@@ -549,7 +748,12 @@
         as: as,
         prefix: prefix
       }, attrs);
-      result = (function() {
+
+      /**
+      TODO:
+        datetime_picker, date, date_picker, radio, range, time
+       */
+      return result = (function() {
         switch (as) {
           case 'email':
           case 'file':
@@ -559,41 +763,22 @@
           case 'string':
           case 'url':
           case 'search':
-            return new Formtastic.Input.StringFieldHelper(field, attrs);
+            return new FormtasticInput.StringFieldHelper(field, attrs);
           case 'hidden':
-            return new Formtastic.Input.HiddenFieldHelper(field, attrs);
+            return new FormtasticInput.HiddenFieldHelper(field, attrs);
           case 'text':
-            return new Formtastic.Input.TextFieldHelper(field, attrs);
-          case 'datetime_picker':
-            throw "TODO datetime_picker";
-            break;
+            return new FormtasticInput.TextFieldHelper(field, attrs);
           case 'boolean':
           case 'bool':
           case 'checkbox':
           case 'check_box':
-            return new Formtastic.Input.BooleanFieldHelper(field, attrs);
-          case 'date':
-            throw "TODO date";
-            break;
-          case 'date_picker':
-            throw "TODO date_picker";
-            break;
-          case 'radio':
-            throw "TODO radio";
-            break;
-          case 'range':
-            throw "TODO range";
-            break;
+            return new FormtasticInput.BooleanFieldHelper(field, attrs);
           case 'select':
-            return new Formtastic.Input.SelectFieldHelper(field, attrs);
-          case 'time':
-            throw "TODO time";
-            break;
+            return new FormtasticInput.SelectFieldHelper(field, attrs);
           default:
             throw new Error('\'' + as + '\' is not a valid field type.');
         }
       })();
-      return result.render();
     };
 
     function InputBase(field, attrs) {
@@ -605,7 +790,7 @@
       this.input_name = bind(this.input_name, this);
       this.input = bind(this.input, this);
       this.label_name = bind(this.label_name, this);
-      this.label = bind(this.label, this);
+      this._label_node = bind(this._label_node, this);
       this.render = bind(this.render, this);
       this.createNode = bind(this.createNode, this);
       attrs = _.extend({
@@ -640,7 +825,7 @@
     InputBase.prototype.render = function() {
       var result;
       result = {
-        label: this.label(),
+        label: this._label_node(),
         input: this.input(),
         hint: this.hint(),
         wrapper: this.wrapper()
@@ -655,7 +840,7 @@
     @public
      */
 
-    InputBase.prototype.label = function(dom) {
+    InputBase.prototype._label_node = function(dom) {
       var defaults, ele, label_config;
       if (!this.label_name()) {
         return null;
@@ -838,20 +1023,7 @@
 
   })();
 
-  this.Formtastic.Input.Base = InputBase;
-
-}).call(this);
-
-(function() {
-  var FormFieldset, base, base1, fn, key, ref,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  FormtasticInput.Base = InputBase;
 
 
   /**
@@ -865,6 +1037,28 @@
    */
 
   FormFieldset = (function() {
+    var set_callback, set_options;
+
+    set_options = function(options) {
+      if (_.isFunction(options)) {
+        return this.options = {};
+      } else if (_.isObject(options)) {
+        options.name || (options.name = options.title);
+        delete options.title;
+        return this.options = options;
+      } else if (_.isString(options)) {
+        return this.options = {
+          name: options
+        };
+      } else {
+        return this.options = {};
+      }
+    };
+
+    set_callback = function(fn) {
+      return this.cb = _.isFunction(fn) ? fn : null;
+    };
+
     function FormFieldset(options, fn, prefix, nested) {
       this.namespace = bind(this.namespace, this);
       this.inputs = bind(this.inputs, this);
@@ -874,26 +1068,10 @@
       this.fieldset = bind(this.fieldset, this);
       this.render = bind(this.render, this);
       this.createNode = bind(this.createNode, this);
-      if (_.isFunction(options)) {
-        this.options = {};
-      } else if (_.isObject(options)) {
-        options.name || (options.name = options.title);
-        delete options.title;
-        this.options = options;
-      } else if (_.isString(options)) {
-        this.options = {
-          name: options
-        };
-      } else {
-        this.options = {};
-      }
+      set_options.apply(this, [options]);
+      set_callback.apply(this, [fn]);
       this.prefix = prefix;
       this.nested = nested;
-      if (_.isFunction(fn)) {
-        this.cb = fn;
-      } else {
-        this.cb = null;
-      }
     }
 
 
@@ -993,11 +1171,8 @@
     @public
      */
 
-    FormFieldset.prototype.input = function(field, attributes) {
-      if (!field) {
-        throw new Error("Required Parameter Missing: 'field'");
-      }
-      return Formtastic.Input.Base.get_inputs_by_config(field, attributes, this.namespace());
+    FormFieldset.prototype.input = function(field, attributes, prefix) {
+      return Formtastic.prototype.input.apply(this, [field, attributes, this.namespace() || prefix]);
     };
 
 
@@ -1012,7 +1187,7 @@
       var fn, options;
       options = _.first(arguments);
       fn = _.last(arguments);
-      return new Formtastic.Inputs(options, fn, this.namespace(), true).render();
+      return new FormtasticInputs(options, fn, this.namespace(), true).render();
     };
 
 
@@ -1038,47 +1213,28 @@
 
   })();
 
-  ref = Formtastic.Inputs;
-  for (key in ref) {
-    if (!hasProp.call(ref, key)) continue;
-    fn = ref[key];
-    FormFieldset.prototype[key] = fn;
-  }
+  extend(FormtasticInputs, FormFieldset);
 
-  this.Formtastic.Inputs = FormFieldset;
-
-}).call(this);
-
-(function() {
-  var BooleanFieldHelper, base, base1,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  FormtasticInputs = FormFieldset;
 
 
   /**
   @class BooleanFieldHelper
-  @module Formtastic.Input
+  @module FormtasticInput
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
 
   BooleanFieldHelper = (function(superClass) {
-    extend(BooleanFieldHelper, superClass);
+    extend1(BooleanFieldHelper, superClass);
 
     function BooleanFieldHelper() {
       this.input = bind(this.input, this);
-      this.label = bind(this.label, this);
+      this._label_node = bind(this._label_node, this);
       return BooleanFieldHelper.__super__.constructor.apply(this, arguments);
     }
 
-    BooleanFieldHelper.prototype.label = function() {
+    BooleanFieldHelper.prototype._label_node = function() {
       return null;
     };
 
@@ -1128,7 +1284,7 @@
       }
       input_config = _.extend(_.clone(defaults), this.attrs.input_html);
       checkbox = this.createNode(input_config);
-      container = Formtastic.Input.Base.prototype.label.apply(this, [true]);
+      container = FormtasticInput.Base.prototype._label_node.apply(this, [true]);
       container.innerHTML = checkbox + ' ' + this.label_name();
       container.className = '';
       return _hidden_field(_.clone(defaults)) + container.outerHTML;
@@ -1136,59 +1292,28 @@
 
     return BooleanFieldHelper;
 
-  })(Formtastic.Input.Base);
+  })(FormtasticInput.Base);
 
-  this.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper;
-
-
-  /**
-  @for Formtastic
-  @method check_box
-  @param field {String} Name of the field
-  @param attributes {Object} Field Attributes
-   */
-
-  this.Formtastic.Inputs.check_box = function(field, attrs) {
-    attrs = _.extend({
-      input_html: {},
-      attrs: attrs
-    });
-    attrs.input_html['type'] = 'checkbox';
-    return this.input(field, attrs);
-  };
-
-}).call(this);
-
-(function() {
-  var HiddenFieldHelper, base, base1,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  FormtasticInput.BooleanFieldHelper = BooleanFieldHelper;
 
 
   /**
   @class HiddenFieldHelper
-  @module Formtastic.Input
+  @module FormtasticInput
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
 
   HiddenFieldHelper = (function(superClass) {
-    extend(HiddenFieldHelper, superClass);
+    extend1(HiddenFieldHelper, superClass);
 
     function HiddenFieldHelper() {
       this.wrapper = bind(this.wrapper, this);
-      this.label = bind(this.label, this);
+      this._label_node = bind(this._label_node, this);
       return HiddenFieldHelper.__super__.constructor.apply(this, arguments);
     }
 
-    HiddenFieldHelper.prototype.label = function() {
+    HiddenFieldHelper.prototype._label_node = function() {
       return null;
     };
 
@@ -1201,67 +1326,37 @@
 
     return HiddenFieldHelper;
 
-  })(Formtastic.Input.Base);
+  })(FormtasticInput.Base);
 
-  this.Formtastic.Input.HiddenFieldHelper = HiddenFieldHelper;
-
-
-  /**
-  @for Formtastic
-  @method string_field
-  @param field {String} Name of the field
-  @param attributes {Object} Field Attributes
-   */
-
-  this.Formtastic.Inputs.hidden_field = function(field, attrs) {
-    attrs = _.extend({
-      as: 'hidden'
-    }, attrs);
-    return this.input(field, attrs);
-  };
-
-}).call(this);
-
-(function() {
-  var SelectFieldHelper, base, base1,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  FormtasticInput.HiddenFieldHelper = HiddenFieldHelper;
 
 
   /**
   @class SelectFieldHelper
-  @module Formtastic.Input
+  @module FormtasticInput
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
   @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
    */
 
   SelectFieldHelper = (function(superClass) {
-    extend(SelectFieldHelper, superClass);
+    extend1(SelectFieldHelper, superClass);
 
     function SelectFieldHelper(field, attributes, prefix) {
       this.input = bind(this.input, this);
-      if (typeof attributes['collection'] === 'undefined') {
+      if (typeof attributes.collection === 'undefined') {
         throw new Error("Missing :collection for select box.");
       }
       SelectFieldHelper.__super__.constructor.call(this, field, attributes, prefix);
     }
 
     SelectFieldHelper.prototype.input = function() {
-      var collection, defaults, ele, i, input_config, item, len, option;
+      var collection, defaults, ele, input_config, item, j, len, option;
       collection = this.attrs.collection;
       defaults = {
         tag: 'select',
         name: this.input_name(),
-        multiple: this.attrs['multiple'],
-        name: this.field,
+        multiple: this.attrs.multiple,
         required: this.required,
         "class": this.constructor.default_input_class
       };
@@ -1287,8 +1382,8 @@
           return n.outerHTML;
         };
       })(this);
-      for (i = 0, len = collection.length; i < len; i++) {
-        item = collection[i];
+      for (j = 0, len = collection.length; j < len; j++) {
+        item = collection[j];
         ele.innerHTML = ele.innerHTML + option(item);
       }
       return ele.outerHTML;
@@ -1296,48 +1391,20 @@
 
     return SelectFieldHelper;
 
-  })(Formtastic.Input.Base);
+  })(FormtasticInput.Base);
 
-  this.Formtastic.Input.SelectFieldHelper = SelectFieldHelper;
-
-
-  /**
-  @for Formtastic
-  @method select_field
-  @param field {String} Name of the field
-  @param attributes {Object} Field Attributes
-  @returns {Object} `ret.label` and `ret.input` are both html strings
-   */
-
-  this.Formtastic.Inputs.select_field = function(field, attrs) {
-    attrs = _.extend({}, attrs);
-    attrs.as = 'select';
-    return this.input(field, attrs);
-  };
-
-}).call(this);
-
-(function() {
-  var StringFieldHelper, base, base1,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  FormtasticInput.SelectFieldHelper = SelectFieldHelper;
 
 
   /**
   @class StringFieldHelper
-  @module Formtastic.Input
+  @module FormtasticInput
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
 
   StringFieldHelper = (function(superClass) {
-    extend(StringFieldHelper, superClass);
+    extend1(StringFieldHelper, superClass);
 
     function StringFieldHelper(field, attributes, prefix) {
       StringFieldHelper.__super__.constructor.call(this, field, attributes, prefix);
@@ -1345,53 +1412,21 @@
 
     return StringFieldHelper;
 
-  })(Formtastic.Input.Base);
+  })(FormtasticInput.Base);
 
-  this.Formtastic.Input.StringFieldHelper = StringFieldHelper;
-
-
-  /**
-  @for Formtastic
-  @method string_field
-  @param field {String} Name of the field
-  @param attributes {Object} Field Attributes
-   */
-
-  this.Formtastic.Inputs.string_field = function(field, attrs) {
-    var base2;
-    attrs = _.extend({
-      input_html: {},
-      attrs: attrs
-    });
-    (base2 = attrs.input_html)['type'] || (base2['type'] = 'text');
-    return this.input(field, attrs);
-  };
-
-}).call(this);
-
-(function() {
-  var TextFieldHelper, base, base1,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  this.Formtastic || (this.Formtastic = {});
-
-  (base = this.Formtastic).Input || (base.Input = {});
-
-  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+  FormtasticInput.StringFieldHelper = StringFieldHelper;
 
 
   /**
   @class TextFieldHelper
-  @module Formtastic.Input
+  @module FormtasticInput
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
   @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
    */
 
   TextFieldHelper = (function(superClass) {
-    extend(TextFieldHelper, superClass);
+    extend1(TextFieldHelper, superClass);
 
     function TextFieldHelper(field, attributes, prefix) {
       this.input = bind(this.input, this);
@@ -1415,7 +1450,7 @@
       input_config = _.extend(defaults, this.attrs.input_html);
       value = input_config['value'];
       delete input_config['value'];
-      delete input_config['type'];
+      delete input_config.type;
       delete input_config['as'];
       ele = this.createNode(input_config, true);
       ele.innerHTML = value;
@@ -1424,22 +1459,8 @@
 
     return TextFieldHelper;
 
-  })(Formtastic.Input.Base);
+  })(FormtasticInput.Base);
 
-  this.Formtastic.Input.TextFieldHelper = TextFieldHelper;
-
-
-  /**
-  @for Formtastic
-  @method textarea_field
-  @param field {String} Name of the field
-  @param attributes {Object} Field Attributes
-   */
-
-  this.Formtastic.Inputs.textarea_field = function(field, attrs) {
-    attrs = _.extend({}, attrs);
-    attrs.as = 'text';
-    return this.input(field, attrs);
-  };
+  FormtasticInput.TextFieldHelper = TextFieldHelper;
 
 }).call(this);

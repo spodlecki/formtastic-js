@@ -13,8 +13,16 @@ module.exports = function(grunt) {
     // Task configuration.
     coffee: {
       compile: {
+        options: {
+          join: true
+        },
         files: {
-          'js/<%= pkg.name %>.js': 'src/**/*.coffee'
+          'js/<%= pkg.name %>.js': [
+            'src/core.coffee',
+            'src/helpers/*.coffee',
+            'src/formtastic*.coffee',
+            'src/inputs/*.coffee'
+          ]
         }
       }
     },

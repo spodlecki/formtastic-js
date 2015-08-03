@@ -1,7 +1,3 @@
-this.Formtastic ||= {}
-this.Formtastic.Input ||= {}
-this.Formtastic.Inputs ||= {}
-
 ###*
 Formtastic builder, for javascript.
 
@@ -116,10 +112,10 @@ class Form
   ###*
   Default Form Action for all Formtastic forms
   @property default_form_action
-  @default 'javascript:void(0);'
+  @default '#'
   @type String
   ###
-  @default_form_action = 'javascript:void(0);'
+  @default_form_action = '#'
 
   ###*
   Underscore Template to build the form group. Passed attributes are:
@@ -216,11 +212,24 @@ class Form
     delete attrs.hint
     @createNode(attrs, true)
 
-  constructor: (object, attrs, fn) ->
-    @attrs = attrs
-    @el = form.apply(this, [attrs])
+  set_options = (attrs)->
+    if _.isFunction(attrs)
+      {}
+    else if _.isObject(attrs)
+      attrs
+    else if _.isString(attrs)
+      {as: attrs}
+    else
+      {}
+
+  set_callback = (fn)->
+    if _.isFunction(fn) then fn else null
+
+  constructor: (object, attrs) ->
+    @attrs = set_options(attrs)
+    @el = form.apply(this, [@attrs])
     @object = object
-    @callback = fn
+    @callback = set_callback(_.last(arguments))
 
   ###*
   Renders the Form HTML
@@ -246,9 +255,11 @@ class Form
   @return {String} HTML String of built form input and label
   @public
   ###
-  input: (field, attributes, prefix) =>
+  input: (field, attributes, prefix, raw) =>
     throw new Error("Required Parameter Missing: 'field'") unless field
-    Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix or @attrs.as)
+    i = FormtasticInput.Base.get_inputs_by_config(field, attributes, prefix or (@attrs and @attrs.as))
+
+    if raw then i.input() else i.render()
 
   ###*
   @method inputs
@@ -260,24 +271,7 @@ class Form
     options = _.first(arguments)
     fn = _.last(arguments)
 
-    new Formtastic.Inputs(options, fn, @attrs.as).render()
-
-  ###*
-  @method label
-  @param name {String} Humanized name of the field
-  @param attrs {Object} Attributes passed to the label by :label_html
-  @return {String} Outer HTML of Label DOM Node
-  @public
-  ###
-  label: (name, attrs)=>
-    return null unless name
-    cfg = _.extend({required: false, tag: 'label', class: Formtastic.default_label_class}, attrs)
-    required = cfg.required
-    delete cfg.required
-
-    ele = @createNode(cfg, true)
-    ele.innerHTML = name + (if required then Formtastic.required_string else '')
-    ele.outerHTML
+    new FormtasticInputs(options, fn, @attrs.as).render()
 
   ###*
   Giving access to the private function `dom` - given ability to overwrite if wanted by using the prototype.
@@ -304,7 +298,6 @@ class Form
   createNode: =>
     @constructor.createNode.apply(this, arguments)
 
-for own key, fn of Formtastic.Inputs
-  Form.prototype[key] = fn
+extend(FormtasticHelpers, Form)
 
-window.Formtastic = Form
+this.Formtastic = Form

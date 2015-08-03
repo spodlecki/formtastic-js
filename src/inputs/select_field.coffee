@@ -1,18 +1,14 @@
-this.Formtastic ||= {}
-this.Formtastic.Input ||= {}
-this.Formtastic.Inputs ||= {}
-
 ###*
 @class SelectFieldHelper
-@module Formtastic.Input
+@module FormtasticInput
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
 ###
 
-class SelectFieldHelper extends Formtastic.Input.Base
+class SelectFieldHelper extends FormtasticInput.Base
   constructor: (field, attributes, prefix)->
-    throw new Error("Missing :collection for select box.") if typeof(attributes['collection']) == 'undefined'
+    throw new Error("Missing :collection for select box.") if typeof(attributes.collection) == 'undefined'
     super(field, attributes, prefix)
 
   input: =>
@@ -20,8 +16,7 @@ class SelectFieldHelper extends Formtastic.Input.Base
     defaults =
       tag: 'select'
       name: @input_name()
-      multiple: @attrs['multiple']
-      name: @field
+      multiple: @attrs.multiple
       required: @required
       class: @constructor.default_input_class
 
@@ -49,17 +44,4 @@ class SelectFieldHelper extends Formtastic.Input.Base
 
     ele.outerHTML
 
-this.Formtastic.Input.SelectFieldHelper = SelectFieldHelper
-
-
-###*
-@for Formtastic
-@method select_field
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
-@returns {Object} `ret.label` and `ret.input` are both html strings
-###
-this.Formtastic.Inputs.select_field = (field, attrs)->
-  attrs = _.extend({}, attrs)
-  attrs.as = 'select'
-  @input(field, attrs)
+FormtasticInput.SelectFieldHelper = SelectFieldHelper

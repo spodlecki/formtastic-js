@@ -1,7 +1,3 @@
-this.Formtastic ||= {}
-this.Formtastic.Input ||= {}
-this.Formtastic.Inputs ||= {}
-
 ###*
 @class Inputs
 @module Formtastic
@@ -13,7 +9,7 @@ this.Formtastic.Inputs ||= {}
 ###
 
 class FormFieldset
-  constructor: (options, fn, prefix, nested)->
+  set_options = (options)->
     if _.isFunction(options)
       @options = {}
     else if _.isObject(options)
@@ -25,12 +21,15 @@ class FormFieldset
     else
       @options = {}
 
+  set_callback = (fn)->
+    @cb = if _.isFunction(fn) then fn else null
+
+  constructor: (options, fn, prefix, nested)->
+    set_options.apply(this, [options])
+    set_callback.apply(this, [fn])
+
     @prefix = prefix
     @nested = nested
-    if _.isFunction(fn)
-      @cb = fn
-    else
-      @cb = null
 
   ###*
   See `Formtastic.createNode`
@@ -101,9 +100,8 @@ class FormFieldset
   @return {String} HTML String of built form input and label
   @public
   ###
-  input: (field, attributes) =>
-    throw new Error("Required Parameter Missing: 'field'") unless field
-    Formtastic.Input.Base.get_inputs_by_config(field, attributes, @namespace())
+  input: (field, attributes, prefix) =>
+    Formtastic.prototype.input.apply(this, [field, attributes, @namespace() or prefix])
 
   ###*
   @method inputs
@@ -115,7 +113,7 @@ class FormFieldset
     options = _.first(arguments)
     fn = _.last(arguments)
 
-    new Formtastic.Inputs(options, fn, @namespace(), true).render()
+    new FormtasticInputs(options, fn, @namespace(), true).render()
 
   ###*
   @method namespace
@@ -127,7 +125,6 @@ class FormFieldset
     else
       _.template('<%= name %>')({prefix: @prefix})
 
-for own key, fn of Formtastic.Inputs
-  FormFieldset.prototype[key] = fn
+extend(FormtasticInputs, FormFieldset)
 
-this.Formtastic.Inputs = FormFieldset
+FormtasticInputs = FormFieldset

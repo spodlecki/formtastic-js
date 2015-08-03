@@ -1,16 +1,13 @@
-this.Formtastic ||= {}
-this.Formtastic.Input ||= {}
-this.Formtastic.Inputs ||= {}
-
 ###*
 @class BooleanFieldHelper
-@module Formtastic.Input
+@module FormtasticInput
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
 
-class BooleanFieldHelper extends Formtastic.Input.Base
-  label: =>
+class BooleanFieldHelper extends FormtasticInput.Base
+
+  _label_node: =>
     null
 
   input: =>
@@ -43,22 +40,10 @@ class BooleanFieldHelper extends Formtastic.Input.Base
 
     input_config = _.extend(_.clone(defaults), @attrs.input_html)
     checkbox = @createNode(input_config)
-    container = Formtastic.Input.Base.prototype.label.apply(this, [true])
+    container = FormtasticInput.Base.prototype._label_node.apply(this, [true])
     container.innerHTML = checkbox + ' ' + @label_name()
     container.className = ''
 
     (_hidden_field(_.clone(defaults)) + container.outerHTML)
 
-this.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper
-
-
-###*
-@for Formtastic
-@method check_box
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
-###
-this.Formtastic.Inputs.check_box = (field, attrs)->
-  attrs = _.extend({input_html: {}, attrs})
-  attrs.input_html['type'] = 'checkbox'
-  @input(field, attrs)
+FormtasticInput.BooleanFieldHelper = BooleanFieldHelper
