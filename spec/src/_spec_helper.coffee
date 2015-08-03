@@ -42,6 +42,6 @@ knownExamples['label_with_text'] = ((text)->
 )
 
 knownExamples['input_with_'] = ((field, value)->
-  it 'has input with '+value, ->
+  it 'has input with "'+field+'" equal to "'+value+'"', ->
     expect(@el.find('form li input').attr(field)).toEqual value
 )

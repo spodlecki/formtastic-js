@@ -1,4 +1,4 @@
-describe '#string', ->
+describe '#number', ->
   describe 'generic', ->
     beforeEach ->
       @object = Object.create({bam: 'bam'})

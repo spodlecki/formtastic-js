@@ -53,10 +53,14 @@ class Formtastic.Input.Base
       'number'
     else if typeof(attrs['collection']) != 'undefined' and attrs['collection'].length > 0
       'select'
-    else if /^(.+)?(phone|fax)$/.test(field)
+    else if /^(.+)?(phone|fax)(\_.+)?$/.test(field)
       'phone'
     else if /^(.+)?email(.+)?$/.test(field)
       'email'
+    else if /^(.+\_)?url(\_.+)?$/.test(field)
+      'url'
+    else if /^(.+\_)?search(\_.+)?$/.test(field)
+      'search'
     else
       Formtastic.default_input_type
 
@@ -73,10 +77,10 @@ class Formtastic.Input.Base
     attrs = _.extend({as: as, prefix: prefix}, attrs)
 
     result = switch as
-      when 'hidden', 'email', 'file', 'number', 'password', 'phone', 'string'
-        new Formtastic.Input.TextFieldHelper(field, attrs)
+      when 'hidden', 'email', 'file', 'number', 'password', 'phone', 'string', 'url', 'search'
+        new Formtastic.Input.StringFieldHelper(field, attrs)
       when 'text'
-        throw("TODO: textarea")
+        new Formtastic.Input.TextFieldHelper(field, attrs)
       when 'datetime_picker'
         throw("TODO datetime_picker")
       when 'boolean', 'bool', 'checkbox', 'check_box'
@@ -89,14 +93,10 @@ class Formtastic.Input.Base
         throw("TODO radio")
       when 'range'
         throw("TODO range")
-      when 'search'
-        throw("TODO search")
       when 'select'
         new Formtastic.Input.SelectFieldHelper(field, attrs)
       when 'time'
         throw("TODO time")
-      when 'url'
-        throw("TODO url")
       else
         throw new Error('\''+as+'\' is not a valid field type.')
 
@@ -173,9 +173,7 @@ class Formtastic.Input.Base
   @return {String} Outer HTML of Input DOM Node
   @public
   ###
-  input: =>
-    # value: @object[input.name]
-
+  input: (config)=>
     defaults =
       placeholder: @label_name()
       tag: 'input'
@@ -184,6 +182,8 @@ class Formtastic.Input.Base
       required: @required
       class: @constructor.default_input_class
       id: @generated_id()
+
+    defaults = _.extend(defaults, config)
 
     delete defaults['required'] unless @required
 

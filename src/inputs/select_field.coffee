@@ -1,16 +1,5 @@
 ###*
-Build basic input with a given type.
-
-
-```
-object = {}
-f = new Formtastic(object)
-str = f.text_field()
-// str.label => DOM String for label
-// str.input => DOM String for Input
-// str.wrapper => Attributes for wrapper (Object)
-```
-@class TextFieldHelper
+@class SelectFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
@@ -63,14 +52,6 @@ window.Formtastic.Input.SelectFieldHelper = SelectFieldHelper
 
 
 ###*
-```
-object = {}
-f = new Formtastic(object)
-str = f.select_field()
-// str.label => DOM String for label
-// str.input => DOM String for Input
-// str.wrapper => Attributes for wrapper (Object)
-```
 @for Formtastic
 @method select_field
 @param field {String} Name of the field

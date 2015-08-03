@@ -1,5 +1,4 @@
 ###*
-Creates a check box field
 @class BooleanFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field
@@ -54,7 +53,7 @@ window.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper
 
 ###*
 @for Formtastic
-@method text_field
+@method check_box
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
@@ -62,26 +61,3 @@ window.Formtastic.Inputs.check_box = (field, attrs)->
   attrs = _.extend({input_html: {}, attrs})
   attrs['input_html']['type'] = 'checkbox'
   @input(field, attrs)
-
-
-
-
-  # defaults =
-  #   value: input.config['value'] or '1'
-  #   tag: 'input'
-  #   type: 'checkbox'
-  #   name: input.name
-
-  # if _.isPresent(@object[input.name]) and @object[input.name]
-  #   defaults.checked = true
-
-  # container = @createNode( _.extend({tag: 'label'}, label.config), true )
-  # input_cfg = _.extend(defaults, input.config)
-  # input_node = @createNode( _.extend(defaults, input_cfg), true )
-  # container.innerHTML = input_node.outerHTML + label.name
-
-  # result =
-  #   label: null
-  #   input: container.outerHTML
-
-  # @generate(result, attributes)

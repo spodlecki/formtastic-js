@@ -1,9 +1,15 @@
+## Under Development
+
+While there is a large test suite at the moment, there are missing inputs still.
+
+
 ## [Formtastic](https://github.com/justinfrench/formtastic) JS Port
 
 Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by the [Rails Gem Formtastic](https://github.com/justinfrench/formtastic). The goal of this project is to simply duplicate assumptions from the Rails Gem into the JavaScript project. Please see examples and tests for better coverage details.
 
 ### Usage
 
+**JavaScript**
 ```javascript
 var model = new Backbone.Model({ .... });
 var form = Formtastic.new(model, {as: 'blog', url: '/some/path'}, function(f) {
@@ -56,14 +62,27 @@ var form = Formtastic.new(model, {as: 'blog', url: '/some/path'}, function(f) {
 html = f.render();
 ```
 
+**HAML Coffee**
+```haml
+window.semantic_form_for = (object, form_attributes, fn)->
+  f = new Formtastic(object, form_attributes, fn)
+  return f.render()
+
+=semantic_form_for this, {action: '#', class: 'form form-horizontal'}, (f)->
+  =f.inputs "Some field set", (f2)->
+    =f2.input('name', {required: true, label: "Name"})
+    =f2.input('slug', {required: true, label: "Slug", hint: "Please parameterize your string, or we'll do it for you"})
+    =f2.input('featured', {as: 'boolean', label: "Featured?"})
+
+```
 
 ### The Available Inputs
 
-* `{as: 'select'}` - a select menu. _requires collection to be passed_
+* TODO: `{as: 'select'}` - a select menu. _requires collection to be passed_
 * TODO: `{as: 'check_boxes'}` - a set of check_box inputs. Alternative to _select_
-* `{as: 'radio'}`- a set of radio inputs. Alternative to _select_
+* TODO: `{as: 'radio'}`- a set of radio inputs. Alternative to _select_
 * TODO: `{as: 'time_zone'}` - a select input. Default for column types: name matching _"time_zone"_.
-* `{as: 'password'}`- a password input. Default for column types: _string_ with name matching _"password"_.
+- `{as: 'password'}`- a password input. Default for column types: _string_ with name matching _"password"_.
 * `{as: 'text'}` - a textarea.
 * TODO: `{as: 'date_select'}` - a date select.
 * TODO: `{as: 'datetime_select'}` - a date and time select.
@@ -71,20 +90,19 @@ html = f.render();
 - `{as: 'boolean|checkbox|bool|check_box'}` - a checkbox.
 - `{as: 'string'}` - a text field. Default type for all inputs.
 - `{as: 'number'}` - a text field (just like string).
-* `{as: 'file'}` - a file field.
+- `{as: 'file'}` - a file field.
 * TODO: `{as: 'country'}` - a select menu of country names. Default for column types: name _"country"_
-* `{as: 'email'}` - a text field (just like string). Default for columns with name matching _"email"_. New in HTML5. Works on some mobile browsers already.
-* TODO: `{as: 'url'}` - a text field (just like string). Default for columns with name matching _"url"_. New in HTML5. Works on some mobile browsers already.
-* `{as: 'phone'}` - a text field (just like string). Default for columns with name matching _"phone"_ or _"fax"_. New in HTML5.
-* TODO: `{as: 'search'}` - a text field (just like string). Default for columns with name matching @"search"@. New in HTML5. Works on Safari.
+- `{as: 'email'}` - a text field (just like string). Default for columns with name matching _"email"_. New in HTML5. Works on some mobile browsers already.
+- `{as: 'url'}` - a text field (just like string). Default for columns with name matching _"url"_. New in HTML5. Works on some mobile browsers already.
+- `{as: 'phone'}` - a text field (just like string). Default for columns with name matching _"phone"_ or _"fax"_. New in HTML5.
+- `{as: 'search'}` - a text field (just like string). Default for columns with name matching _"search"_. New in HTML5. Works on Safari.
 * `{as: 'hidden'}` - a hidden field. Creates a hidden field (added for compatibility).
 * TODO: `{as: 'range'}` - a slider field.
 * TODO: `{as: 'datalist'}` - a text field with a accompanying "datalist tag":https://developer.mozilla.org/en/docs/Web/HTML/Element/datalist which provides options for autocompletion
 
 ### Templating
 
-This setup, by default follows the original Formtastic Rails Gem. However, alot of people have been using the forked version, [formtastic-bootstrap3](https://github.com/nickl-/formtastic-bootstrap3). In order to be as dynamic as possible,
-the JS Port uses Underscore's Templating system `_.template()` to allow custom templates.
+By default follows the original Formtastic Rails Gem. However, alot of people use the forked version, [formtastic-bootstrap3](https://github.com/nickl-/formtastic-bootstrap3). This JS Port uses Underscore's Templating system `_.template()` to allow custom templates.
 
 #### Bootstrap 3
 
