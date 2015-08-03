@@ -1,6 +1,6 @@
 /*! formtastic-js - v0.0.1 - 2015-08-02
 * https://github.com/spodlecki/formtastic-js
-* Copyright (c) 2015 Steven Podlecki; Licensed  */
+* Copyright (c) 2015 Steven Podlecki; Licensed MIT */
 (function() {
   _.mixin({
     isBlank: function(object) {
