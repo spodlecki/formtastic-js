@@ -1,6 +1,6 @@
 ## Under Development
 
-While there is a large test suite at the moment, there are missing inputs still.
+While there is a large test suite at the moment, there are [missing inputs still](#the-available-inputs).
 
 ## [Formtastic](https://github.com/justinfrench/formtastic) JS Port
 
