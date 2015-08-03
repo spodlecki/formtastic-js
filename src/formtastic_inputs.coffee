@@ -17,8 +17,8 @@ class FormFieldset
     if _.isFunction(options)
       @options = {}
     else if _.isObject(options)
-      options['name'] ||= options['title']
-      delete options['title']
+      options.name ||= options.title
+      delete options.title
       @options = options
     else if _.isString(options)
       @options = {name: options}
@@ -81,9 +81,9 @@ class FormFieldset
   @public
   ###
   legend: =>
-    return '' unless @options['name']
+    return '' unless @options.name
     legend = @createNode({tag: 'legend'}, true)
-    legend.innerHTML = @options['name']
+    legend.innerHTML = @options.name
     legend.outerHTML
 
   ###*

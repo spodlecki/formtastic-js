@@ -214,8 +214,8 @@ class InputBase
   @public
   ###
   input_name: =>
-    if @attrs.input_html and @attrs.input_html['name']
-      @attrs.input_html['name']
+    if @attrs.input_html and @attrs.input_html.name
+      @attrs.input_html.name
     else
       if @prefix
         _.template('<%= prefix %>[<%= name %>]')({prefix: @prefix, name: @field})
@@ -239,7 +239,7 @@ class InputBase
   @public
   ###
   generated_id: =>
-    return @attrs['id'] if @attrs['id']
+    return @attrs.id if @attrs.id
 
     _.compact([
       @prefix,
