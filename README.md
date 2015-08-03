@@ -2,10 +2,15 @@
 
 While there is a large test suite at the moment, there are missing inputs still.
 
-
 ## [Formtastic](https://github.com/justinfrench/formtastic) JS Port
 
 Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by the [Rails Gem Formtastic](https://github.com/justinfrench/formtastic). The goal of this project is to simply duplicate assumptions from the Rails Gem into the JavaScript project. Please see examples and tests for better coverage details.
+
+### Production Dependency
+
+- [underscore.js](http://underscorejs.org/)
+  - TODO: Remove dependency if possible.
+    Using `_.template`, `_.extend`, `_.clone`, `_.is***`, `_.first`, `_.last`, `_.compact`
 
 ### Usage
 
@@ -172,3 +177,23 @@ Formtastic.default_hint_tag = 'p';
   end
   # JS n/a
   ```
+
+
+### Development
+
+    npm install
+    bower install
+
+Run test suite (uses FireFox browser):
+
+    ./node_modules/karma/bin/karma start
+
+### Contrib
+
+Want to contribute to this project?
+
+- Create feature branch prefixed by feature name
+- Write Specs for Feature
+- Update CHANGELOG.md to reflect fixes, additions, etc.
+- Commit changes to branch and push to remote
+- Submit Pull Request
