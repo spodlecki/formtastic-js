@@ -479,7 +479,8 @@
       container.innerHTML = template({
         input: builder['input'],
         label: builder['label'],
-        hint: builder['hint']
+        hint: builder['hint'],
+        attrs: this.attrs
       });
       return container.outerHTML;
     };
@@ -546,7 +547,6 @@
       }, attrs);
       result = (function() {
         switch (as) {
-          case 'hidden':
           case 'email':
           case 'file':
           case 'number':
@@ -556,6 +556,8 @@
           case 'url':
           case 'search':
             return new Formtastic.Input.StringFieldHelper(field, attrs);
+          case 'hidden':
+            return new Formtastic.Input.HiddenFieldHelper(field, attrs);
           case 'text':
             return new Formtastic.Input.TextFieldHelper(field, attrs);
           case 'datetime_picker':
@@ -916,7 +918,7 @@
       }
       if (this.nested) {
         li = this.createNode({
-          tag: 'li'
+          tag: Formtastic.default_wrapper_tag
         }, true);
         li.innerHTML = fieldset.outerHTML;
         return li.outerHTML;
@@ -1149,6 +1151,67 @@
 
 
 /**
+@class HiddenFieldHelper
+@module Formtastic.Input
+@param field {String} Name of the field
+@param attributes {Object} Field Attributes
+ */
+
+(function() {
+  var HiddenFieldHelper, base,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  this.Formtastic || (this.Formtastic = {});
+
+  (base = this.Formtastic).Inputs || (base.Inputs = {});
+
+  HiddenFieldHelper = (function(superClass) {
+    extend(HiddenFieldHelper, superClass);
+
+    function HiddenFieldHelper() {
+      this.wrapper = bind(this.wrapper, this);
+      this.label = bind(this.label, this);
+      return HiddenFieldHelper.__super__.constructor.apply(this, arguments);
+    }
+
+    HiddenFieldHelper.prototype.label = function() {
+      return null;
+    };
+
+    HiddenFieldHelper.prototype.wrapper = function() {
+      var node;
+      node = HiddenFieldHelper.__super__.wrapper.apply(this, arguments);
+      node.style = "display: none;";
+      return node;
+    };
+
+    return HiddenFieldHelper;
+
+  })(Formtastic.Input.Base);
+
+  this.Formtastic.Input.HiddenFieldHelper = HiddenFieldHelper;
+
+
+  /**
+  @for Formtastic
+  @method string_field
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
+
+  this.Formtastic.Inputs.hidden_field = function(field, attrs) {
+    attrs = _.extend({
+      as: 'hidden'
+    }, attrs);
+    return this.input(field, attrs);
+  };
+
+}).call(this);
+
+
+/**
 @class SelectFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field
@@ -1242,17 +1305,6 @@
 
 
 /**
-Build basic input with a given type.
-
-
-```
-object = {}
-f = new Formtastic(object)
-str = f.text_field()
-// str.label => DOM String for label
-// str.input => DOM String for Input
-// str.wrapper => Attributes for wrapper (Object)
-```
 @class StringFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field

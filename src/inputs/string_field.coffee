@@ -1,15 +1,4 @@
 ###*
-Build basic input with a given type.
-
-
-```
-object = {}
-f = new Formtastic(object)
-str = f.text_field()
-// str.label => DOM String for label
-// str.input => DOM String for Input
-// str.wrapper => Attributes for wrapper (Object)
-```
 @class StringFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field

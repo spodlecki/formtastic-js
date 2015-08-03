@@ -38,7 +38,7 @@ class InputBase
   build_template = (builder)->
     container = builder.wrapper
     template = _.template(Formtastic.template)
-    container.innerHTML = template({input: builder['input'], label: builder['label'], hint: builder['hint']})
+    container.innerHTML = template({input: builder['input'], label: builder['label'], hint: builder['hint'], attrs: @attrs})
     container.outerHTML
 
   ###*
@@ -91,8 +91,10 @@ class InputBase
     attrs = _.extend({as: as, prefix: prefix}, attrs)
 
     result = switch as
-      when 'hidden', 'email', 'file', 'number', 'password', 'phone', 'string', 'url', 'search'
+      when 'email', 'file', 'number', 'password', 'phone', 'string', 'url', 'search'
         new Formtastic.Input.StringFieldHelper(field, attrs)
+      when 'hidden'
+        new Formtastic.Input.HiddenFieldHelper(field, attrs)
       when 'text'
         new Formtastic.Input.TextFieldHelper(field, attrs)
       when 'datetime_picker'

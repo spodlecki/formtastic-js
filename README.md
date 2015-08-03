@@ -87,12 +87,12 @@ window.semantic_form_for = (object, form_attributes, fn)->
 
 ### The Available Inputs
 
-* TODO: `{as: 'select'}` - a select menu. _requires collection to be passed_
+* UNTESTED: `{as: 'select'}` - a select menu. _requires collection to be passed_
 * TODO: `{as: 'check_boxes'}` - a set of check_box inputs. Alternative to _select_
 * TODO: `{as: 'radio'}`- a set of radio inputs. Alternative to _select_
 * TODO: `{as: 'time_zone'}` - a select input. Default for column types: name matching _"time_zone"_.
 - `{as: 'password'}`- a password input. Default for column types: _string_ with name matching _"password"_.
-* `{as: 'text'}` - a textarea.
+- `{as: 'text'}` - a textarea.
 * TODO: `{as: 'date_select'}` - a date select.
 * TODO: `{as: 'datetime_select'}` - a date and time select.
 * TODO: `{as: 'time_select'}` - a time select. Default for column types: @:time@.
@@ -105,7 +105,7 @@ window.semantic_form_for = (object, form_attributes, fn)->
 - `{as: 'url'}` - a text field (just like string). Default for columns with name matching _"url"_. New in HTML5. Works on some mobile browsers already.
 - `{as: 'phone'}` - a text field (just like string). Default for columns with name matching _"phone"_ or _"fax"_. New in HTML5.
 - `{as: 'search'}` - a text field (just like string). Default for columns with name matching _"search"_. New in HTML5. Works on Safari.
-* `{as: 'hidden'}` - a hidden field. Creates a hidden field (added for compatibility).
+- `{as: 'hidden'}` - a hidden field. Creates a hidden field (added for compatibility).
 * TODO: `{as: 'range'}` - a slider field.
 * TODO: `{as: 'datalist'}` - a text field with a accompanying "datalist tag":https://developer.mozilla.org/en/docs/Web/HTML/Element/datalist which provides options for autocompletion
 
