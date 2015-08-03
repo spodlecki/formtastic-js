@@ -1,4 +1,14 @@
-window.Formtastic ||= {}
+this.Formtastic ||= {}
+
+###*
+@class Inputs
+@module Formtastic
+@param object {Mixed} Options
+@param fn {Function} Callback (includes html and inputs being built)
+@param prefix {String} Prefix / Name of Fieldset
+@param nested {Boolean} If the fieldset is nested within another fieldset
+@constructor
+###
 
 class FormFieldset
   constructor: (options, fn, prefix, nested)->
@@ -50,6 +60,11 @@ class FormFieldset
     else
       fieldset.outerHTML
 
+  ###*
+  @method fieldset
+  @return {DOMNode} DOM Node for the Fieldset
+  @public
+  ###
   fieldset: =>
     defaults =
       tag: 'fieldset'
@@ -58,12 +73,22 @@ class FormFieldset
     cfg = _.extend(defaults, @options)
     @createNode(cfg, true)
 
+  ###*
+  @method legend
+  @return {String} Legend's Outer HTML
+  @public
+  ###
   legend: =>
     return '' unless @options['name']
     legend = @createNode({tag: 'legend'}, true)
     legend.innerHTML = @options['name']
     legend.outerHTML
 
+  ###*
+  @method container
+  @return {DOMNode} Container DOM Node that holds all inputs
+  @public
+  ###
   container: =>
     @createNode({tag: Formtastic.default_fieldset_inner_tag}, true)
 
@@ -90,6 +115,10 @@ class FormFieldset
 
     new Formtastic.Inputs(options, fn, @namespace(), true).render()
 
+  ###*
+  @method namespace
+  @return {String} Namespace for fieldset and inputs within
+  ###
   namespace: =>
     if @options['for']
       _.template('<%= prefix %>[<%= name %>]')({prefix: @prefix, name: @options['for']})
@@ -99,5 +128,4 @@ class FormFieldset
 for own key, fn of Formtastic.Inputs
   FormFieldset.prototype[key] = fn
 
-window.Formtastic.Inputs = FormFieldset
-
+this.Formtastic.Inputs = FormFieldset

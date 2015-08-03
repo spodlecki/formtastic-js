@@ -104,6 +104,22 @@ window.semantic_form_for = (object, form_attributes, fn)->
 
 By default follows the original Formtastic Rails Gem. However, alot of people use the forked version, [formtastic-bootstrap3](https://github.com/nickl-/formtastic-bootstrap3). This JS Port uses Underscore's Templating system `_.template()` to allow custom templates.
 
+#### Default
+
+```javascript
+Formtastic.template = '<%= label %><%= input %><%= hint %>';
+Formtastic.default_form_class = 'formtastic';
+Formtastic.default_wrapper_tag = 'li';
+Formtastic.default_wrapper_class = '';
+Formtastic.default_label_class = 'label';
+Formtastic.default_input_class = '';
+Formtastic.default_fieldset_inner_tag = 'ol';
+Formtastic.required_string = '*';
+Formtastic.default_hint_class = 'inline-hints';
+Formtastic.default_hint_tag = 'p';
+```
+
+
 #### Bootstrap 3
 
 ```javascript
@@ -112,12 +128,19 @@ Formtastic.template = '<%= label %>' +
                         '<%= input %>' +
                         '<%= hint %>' +
                       '</div>';
-Formtastic.default_form_class = 'form-horizontal'
-Formtastic.default_wrapper_tag = 'div'
-Formtastic.default_wrapper_class = 'form-group'
-Formtastic.default_label_class = 'col-xs-2 control-label'
-Formtastic.required_string = ' <strong data-toggle="tooltip" data-title="Required" class="required text-danger">*</strong>'
+Formtastic.default_form_class = 'form-horizontal';
+Formtastic.default_wrapper_tag = 'div';
+Formtastic.default_wrapper_class = 'form-group';
+Formtastic.default_label_class = 'col-xs-2 control-label';
+Formtastic.default_input_class = 'form-control';
+Formtastic.default_fieldset_inner_tag = 'div';
+Formtastic.required_string = ' <strong data-toggle="tooltip" data-title="Required" class="required text-danger">*</strong>';
+Formtastic.default_hint_class = 'help-block';
+Formtastic.default_hint_tag = 'p';
 ```
+
+[Bootstrap 3 Skinned]: https://www.evernote.com/l/AMuKcEIln9FAUIcneOi7iyBgE5f1NT2gCxQ
+
 
 ### Formtastic Differences (JS vs Rails Gem)
 
@@ -139,4 +162,13 @@ Formtastic.required_string = ' <strong data-toggle="tooltip" data-title="Require
   builder.input(:title, :as => :number, :input_html => { :in => 5..102 })
   # JS
   builder.input('title', as: 'number', input_html: { min: 5, max: 102 })
+  ```
+-
+  Namespace concept does not exist
+  ```
+  # Ruby
+  f.inputs(namespace: 'world') do |f2|
+    f2.input(:title)
+  end
+  # JS n/a
   ```

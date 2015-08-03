@@ -8,8 +8,8 @@ _.mixin
 ,
   chain: false
 
-window.Formtastic ||= {}
-window.Formtastic.Inputs ||= {}
+this.Formtastic ||= {}
+this.Formtastic.Inputs ||= {}
 
 ###*
 Formtastic builder, for javascript.

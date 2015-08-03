@@ -6,8 +6,8 @@
 @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
 ###
 
-window.Formtastic ||= {}
-window.Formtastic.Inputs ||= {}
+this.Formtastic ||= {}
+this.Formtastic.Inputs ||= {}
 
 class SelectFieldHelper extends Formtastic.Input.Base
   constructor: (field, attributes, prefix)->
@@ -48,7 +48,7 @@ class SelectFieldHelper extends Formtastic.Input.Base
 
     ele.outerHTML
 
-window.Formtastic.Input.SelectFieldHelper = SelectFieldHelper
+this.Formtastic.Input.SelectFieldHelper = SelectFieldHelper
 
 
 ###*
@@ -58,7 +58,7 @@ window.Formtastic.Input.SelectFieldHelper = SelectFieldHelper
 @param attributes {Object} Field Attributes
 @returns {Object} `ret.label` and `ret.input` are both html strings
 ###
-window.Formtastic.Inputs.select_field = (field, attrs)->
+this.Formtastic.Inputs.select_field = (field, attrs)->
   attrs = _.extend({}, attrs)
   attrs['as'] = 'select'
   @input(field, attrs)

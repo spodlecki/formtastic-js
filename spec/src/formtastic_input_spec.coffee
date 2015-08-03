@@ -18,6 +18,21 @@ describe '#input', ->
       form = @form
       expect( -> form.input() ).toThrow(new Error("Required Parameter Missing: 'field'"))
 
+    describe ':input_html', ->
+      describe ':class option', ->
+        beforeEach ->
+          @form.constructor.default_input_class = ''
+
+        it 'can be written by user', ->
+          @el = $(@form.input('title', {input_html: {class: 'hello'}}))
+          expect(@el.find('input').hasClass('hello')).toBeTruthy()
+
+        it 'is also set by the default_input_class', ->
+          @form.constructor.default_input_class = 'form-control'
+          @el = $(@form.input('title'))
+          expect(@el.find('input').hasClass('form-control')).toBeTruthy()
+          @form.constructor.default_input_class = ''
+
     describe ':required option', ->
       describe 'when true', ->
         beforeEach ->
@@ -126,12 +141,10 @@ describe '#input', ->
           @el = $(@form.input('title', label: false))
           expect(@el.find('label').length).toEqual 0
 
-      ###
-      TODO: Can we do a .humanize type to javascript string? I think we should try --
-            it would be worth it not having to retype labels all of the time.
-      ###
       describe 'when not provided', ->
-        xit 'should render a label with humanized field'
+        it 'should render a label with humanized field', ->
+          @el = $(@form.input('title'))
+          expect(@el.find('label').text()).toEqual 'Title'
 
       ###
       TODO: Setup a config with I18n could benefit both labels and hints

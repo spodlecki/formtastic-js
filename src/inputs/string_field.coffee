@@ -16,14 +16,14 @@ str = f.text_field()
 @param attributes {Object} Field Attributes
 ###
 
-window.Formtastic ||= {}
-window.Formtastic.Inputs ||= {}
+this.Formtastic ||= {}
+this.Formtastic.Inputs ||= {}
 
 class StringFieldHelper extends Formtastic.Input.Base
   constructor: (field, attributes, prefix)->
     super(field, attributes, prefix)
 
-window.Formtastic.Input.StringFieldHelper = StringFieldHelper
+this.Formtastic.Input.StringFieldHelper = StringFieldHelper
 
 
 ###*
@@ -32,7 +32,7 @@ window.Formtastic.Input.StringFieldHelper = StringFieldHelper
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
-window.Formtastic.Inputs.string_field = (field, attrs)->
+this.Formtastic.Inputs.string_field = (field, attrs)->
   attrs = _.extend({input_html: {}, attrs})
   attrs['input_html']['type'] ||= 'text'
 

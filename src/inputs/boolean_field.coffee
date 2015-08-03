@@ -5,8 +5,8 @@
 @param attributes {Object} Field Attributes
 ###
 
-window.Formtastic ||= {}
-window.Formtastic.Inputs ||= {}
+this.Formtastic ||= {}
+this.Formtastic.Inputs ||= {}
 
 class BooleanFieldHelper extends Formtastic.Input.Base
   label: =>
@@ -48,7 +48,7 @@ class BooleanFieldHelper extends Formtastic.Input.Base
 
     (_hidden_field(_.clone(defaults)) + container.outerHTML)
 
-window.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper
+this.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper
 
 
 ###*
@@ -57,7 +57,7 @@ window.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
-window.Formtastic.Inputs.check_box = (field, attrs)->
+this.Formtastic.Inputs.check_box = (field, attrs)->
   attrs = _.extend({input_html: {}, attrs})
   attrs['input_html']['type'] = 'checkbox'
   @input(field, attrs)

@@ -6,8 +6,8 @@
 @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
 ###
 
-window.Formtastic ||= {}
-window.Formtastic.Inputs ||= {}
+this.Formtastic ||= {}
+this.Formtastic.Inputs ||= {}
 
 class TextFieldHelper extends Formtastic.Input.Base
   constructor: (field, attributes, prefix)->
@@ -35,7 +35,7 @@ class TextFieldHelper extends Formtastic.Input.Base
     ele.innerHTML = value
     ele.outerHTML
 
-window.Formtastic.Input.TextFieldHelper = TextFieldHelper
+this.Formtastic.Input.TextFieldHelper = TextFieldHelper
 
 
 ###*
@@ -44,7 +44,7 @@ window.Formtastic.Input.TextFieldHelper = TextFieldHelper
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
-window.Formtastic.Inputs.textarea_field = (field, attrs)->
+this.Formtastic.Inputs.textarea_field = (field, attrs)->
   attrs = _.extend({}, attrs)
   attrs['as'] = 'text'
   @input(field, attrs)

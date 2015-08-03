@@ -1,7 +1,16 @@
-window.Formtastic ||= {}
-window.Formtastic.Input ||= {}
+this.Formtastic ||= {}
+this.Formtastic.Input ||= {}
 
-class Formtastic.Input.Base
+###*
+@class Base
+@module Formtastic.Input
+@param object {Object} Backbone Model or Hash
+@param attributes {Object} Attributes to pass on to the <form> element
+@param fn {Function} Callback (includes html and inputs being built)
+@constructor
+###
+
+class InputBase
   ###*
   See `Formtastic.merge_css_strings`
   @method merge_css_strings
@@ -9,7 +18,12 @@ class Formtastic.Input.Base
   ###
   merge_css_strings = Formtastic.merge_css_strings
 
-  # https://gist.github.com/cyberfox/1301931
+  ###*
+  Equivilant to rails' "blog_post".humanize
+  @method humanize
+  @param property {String}
+  @credit https://gist.github.com/cyberfox/1301931
+  ###
   humanize = (property)->
     property.replace(/_/g, ' ').replace /(\w+)/g, (match) ->
       match.charAt(0).toUpperCase() + match.slice(1)
@@ -180,7 +194,7 @@ class Formtastic.Input.Base
       type: (if @as == 'string' then 'text' else @as)
       name: @input_name()
       required: @required
-      class: @constructor.default_input_class
+      class: Formtastic.default_input_class
       id: @generated_id()
 
     defaults = _.extend(defaults, config)
@@ -205,9 +219,22 @@ class Formtastic.Input.Base
       else
         _.template('<%= name %>')({prefix: @prefix, name: @field})
 
+  ###*
+  TODO: Return the objects value and set value on input
+  @method input_value
+  @return {Mixed}
+  @public
+  @beta
+  ###
   input_value: =>
     null
 
+  ###*
+  Generates the ID for the input field.
+  @method generate_id
+  @return {String}
+  @public
+  ###
   generated_id: =>
     return @attrs['id'] if @attrs['id']
 
@@ -259,6 +286,9 @@ class Formtastic.Input.Base
   @method generate
   @param builder {Object} Hash that is returned by Formtastic.Helpers
   @return {String} HTML String
+  @public
   ###
   generate: (builder)=>
     build_template.apply(this, [builder])
+
+this.Formtastic.Input.Base = InputBase
