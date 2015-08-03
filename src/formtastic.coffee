@@ -1,14 +1,5 @@
-_.mixin
-  isBlank: (object) ->
-    switch typeof object
-      when 'number' then isNaN(object)
-      else _.isEmpty(object)
-  isPresent: (object) ->
-    !_.isBlank(object)
-,
-  chain: false
-
 this.Formtastic ||= {}
+this.Formtastic.Input ||= {}
 this.Formtastic.Inputs ||= {}
 
 ###*

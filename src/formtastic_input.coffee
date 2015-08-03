@@ -1,5 +1,6 @@
 this.Formtastic ||= {}
 this.Formtastic.Input ||= {}
+this.Formtastic.Inputs ||= {}
 
 ###*
 @class Base

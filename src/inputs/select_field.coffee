@@ -1,3 +1,7 @@
+this.Formtastic ||= {}
+this.Formtastic.Input ||= {}
+this.Formtastic.Inputs ||= {}
+
 ###*
 @class SelectFieldHelper
 @module Formtastic.Input
@@ -5,9 +9,6 @@
 @param attributes {Object} Field Attributes
 @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
 ###
-
-this.Formtastic ||= {}
-this.Formtastic.Inputs ||= {}
 
 class SelectFieldHelper extends Formtastic.Input.Base
   constructor: (field, attributes, prefix)->

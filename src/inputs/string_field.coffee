@@ -1,12 +1,13 @@
+this.Formtastic ||= {}
+this.Formtastic.Input ||= {}
+this.Formtastic.Inputs ||= {}
+
 ###*
 @class StringFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
-
-this.Formtastic ||= {}
-this.Formtastic.Inputs ||= {}
 
 class StringFieldHelper extends Formtastic.Input.Base
   constructor: (field, attributes, prefix)->

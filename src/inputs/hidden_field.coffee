@@ -1,12 +1,13 @@
+this.Formtastic ||= {}
+this.Formtastic.Input ||= {}
+this.Formtastic.Inputs ||= {}
+
 ###*
 @class HiddenFieldHelper
 @module Formtastic.Input
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
-
-this.Formtastic ||= {}
-this.Formtastic.Inputs ||= {}
 
 class HiddenFieldHelper extends Formtastic.Input.Base
   label: =>

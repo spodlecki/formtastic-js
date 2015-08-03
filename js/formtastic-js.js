@@ -1,13 +1,9 @@
 (function() {
-  var Form, base, fn, key, ref,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    hasProp = {}.hasOwnProperty;
-
   _.mixin({
     isBlank: function(object) {
       switch (typeof object) {
         case 'number':
-          return isNaN(object);
+          return _.isNaN(object);
         default:
           return _.isEmpty(object);
       }
@@ -19,9 +15,18 @@
     chain: false
   });
 
+}).call(this);
+
+(function() {
+  var Form, base, base1, fn, key, ref,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    hasProp = {}.hasOwnProperty;
+
   this.Formtastic || (this.Formtastic = {});
 
-  (base = this.Formtastic).Inputs || (base.Inputs = {});
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
 
 
   /**
@@ -418,12 +423,14 @@
 }).call(this);
 
 (function() {
-  var InputBase, base,
+  var InputBase, base, base1,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.Formtastic || (this.Formtastic = {});
 
   (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
 
 
   /**
@@ -836,11 +843,15 @@
 }).call(this);
 
 (function() {
-  var FormFieldset, fn, key, ref,
+  var FormFieldset, base, base1, fn, key, ref,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     hasProp = {}.hasOwnProperty;
 
   this.Formtastic || (this.Formtastic = {});
+
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
 
 
   /**
@@ -1038,23 +1049,25 @@
 
 }).call(this);
 
-
-/**
-@class BooleanFieldHelper
-@module Formtastic.Input
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
- */
-
 (function() {
-  var BooleanFieldHelper, base,
+  var BooleanFieldHelper, base, base1,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   this.Formtastic || (this.Formtastic = {});
 
-  (base = this.Formtastic).Inputs || (base.Inputs = {});
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+
+
+  /**
+  @class BooleanFieldHelper
+  @module Formtastic.Input
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
 
   BooleanFieldHelper = (function(superClass) {
     extend(BooleanFieldHelper, superClass);
@@ -1146,23 +1159,25 @@
 
 }).call(this);
 
-
-/**
-@class HiddenFieldHelper
-@module Formtastic.Input
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
- */
-
 (function() {
-  var HiddenFieldHelper, base,
+  var HiddenFieldHelper, base, base1,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   this.Formtastic || (this.Formtastic = {});
 
-  (base = this.Formtastic).Inputs || (base.Inputs = {});
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+
+
+  /**
+  @class HiddenFieldHelper
+  @module Formtastic.Input
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
 
   HiddenFieldHelper = (function(superClass) {
     extend(HiddenFieldHelper, superClass);
@@ -1207,24 +1222,26 @@
 
 }).call(this);
 
-
-/**
-@class SelectFieldHelper
-@module Formtastic.Input
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
-@param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
- */
-
 (function() {
-  var SelectFieldHelper, base,
+  var SelectFieldHelper, base, base1,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   this.Formtastic || (this.Formtastic = {});
 
-  (base = this.Formtastic).Inputs || (base.Inputs = {});
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+
+
+  /**
+  @class SelectFieldHelper
+  @module Formtastic.Input
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+  @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
+   */
 
   SelectFieldHelper = (function(superClass) {
     extend(SelectFieldHelper, superClass);
@@ -1300,22 +1317,24 @@
 
 }).call(this);
 
-
-/**
-@class StringFieldHelper
-@module Formtastic.Input
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
- */
-
 (function() {
-  var StringFieldHelper, base,
+  var StringFieldHelper, base, base1,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   this.Formtastic || (this.Formtastic = {});
 
-  (base = this.Formtastic).Inputs || (base.Inputs = {});
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+
+
+  /**
+  @class StringFieldHelper
+  @module Formtastic.Input
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+   */
 
   StringFieldHelper = (function(superClass) {
     extend(StringFieldHelper, superClass);
@@ -1339,35 +1358,37 @@
    */
 
   this.Formtastic.Inputs.string_field = function(field, attrs) {
-    var base1;
+    var base2;
     attrs = _.extend({
       input_html: {},
       attrs: attrs
     });
-    (base1 = attrs['input_html'])['type'] || (base1['type'] = 'text');
+    (base2 = attrs['input_html'])['type'] || (base2['type'] = 'text');
     return this.input(field, attrs);
   };
 
 }).call(this);
 
-
-/**
-@class TextFieldHelper
-@module Formtastic.Input
-@param field {String} Name of the field
-@param attributes {Object} Field Attributes
-@param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
- */
-
 (function() {
-  var TextFieldHelper, base,
+  var TextFieldHelper, base, base1,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   this.Formtastic || (this.Formtastic = {});
 
-  (base = this.Formtastic).Inputs || (base.Inputs = {});
+  (base = this.Formtastic).Input || (base.Input = {});
+
+  (base1 = this.Formtastic).Inputs || (base1.Inputs = {});
+
+
+  /**
+  @class TextFieldHelper
+  @module Formtastic.Input
+  @param field {String} Name of the field
+  @param attributes {Object} Field Attributes
+  @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
+   */
 
   TextFieldHelper = (function(superClass) {
     extend(TextFieldHelper, superClass);
