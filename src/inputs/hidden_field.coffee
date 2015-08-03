@@ -5,13 +5,13 @@
 @param attributes {Object} Field Attributes
 ###
 
-class HiddenFieldHelper extends FormtasticInput.Base
+class HiddenFieldHelper extends FormtasticInputBase
   _label_node: =>
     null
 
   wrapper: =>
     node = super
-    node.style = "display: none;"
+    node.setAttribute('style', "display: none;")
     node
 
 FormtasticInput.HiddenFieldHelper = HiddenFieldHelper

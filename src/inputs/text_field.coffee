@@ -6,7 +6,7 @@
 @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
 ###
 
-class TextFieldHelper extends FormtasticInput.Base
+class TextFieldHelper extends FormtasticInputBase
   constructor: (field, attributes, prefix)->
     super(field, attributes, prefix)
 
@@ -17,13 +17,13 @@ class TextFieldHelper extends FormtasticInput.Base
       type: (if @as == 'string' then 'text' else @as)
       name: @input_name()
       required: @required
-      class: @constructor.default_input_class
+      class: Formtastic.default_input_class
       id: @generated_id()
 
     delete defaults.required unless @required
 
     input_config = _.extend(defaults, @attrs.input_html)
-    value = input_config['value']
+    value = input_config['value'] or ''
     delete input_config['value']
     delete input_config.type
     delete input_config['as']

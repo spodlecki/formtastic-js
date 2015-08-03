@@ -1,6 +1,5 @@
 ###*
-@class Inputs
-@module Formtastic
+@class FormtasticInputs
 @param object {Mixed} Options
 @param fn {Function} Callback (includes html and inputs being built)
 @param prefix {String} Prefix / Name of Fieldset
@@ -8,28 +7,32 @@
 @constructor
 ###
 
-class FormFieldset
-  set_options = (options)->
-    if _.isFunction(options)
-      @options = {}
-    else if _.isObject(options)
-      options.name ||= options.title
-      delete options.title
-      @options = options
-    else if _.isString(options)
-      @options = {name: options}
-    else
-      @options = {}
+class FormtasticInputs
+  constructor: ->
+    args = _.compact(arguments)
+    @options = {}
+    @cb = undefined
+    @nested = false
+    @prefix = undefined
 
-  set_callback = (fn)->
-    @cb = if _.isFunction(fn) then fn else null
+    _.each(args, (arg, i)=>
+      if _.isFunction(arg)
+        @cb = arg
+      else if _.isBoolean(arg)
+        @nested = arg
+      else if _.isObject(arg)
+        unless @options.name
+          arg.name = if arg.name then arg.name else arg.title
+          delete arg.title
 
-  constructor: (options, fn, prefix, nested)->
-    set_options.apply(this, [options])
-    set_callback.apply(this, [fn])
-
-    @prefix = prefix
-    @nested = nested
+        _.extend(@options, arg)
+      else if _.isString(arg) and i == 0
+        @options = {name: arg}
+      else if _.isString(arg)
+        @prefix = arg
+    )
+    @tag = 'fieldset'
+    @css_class = 'inputs'
 
   ###*
   See `Formtastic.createNode`
@@ -68,10 +71,12 @@ class FormFieldset
   ###
   fieldset: =>
     defaults =
-      tag: 'fieldset'
-      class: 'inputs'
+      tag: @tag
+      class: @css_class
 
     cfg = _.extend(defaults, @options)
+    delete cfg.name
+
     @createNode(cfg, true)
 
   ###*
@@ -100,31 +105,46 @@ class FormFieldset
   @return {String} HTML String of built form input and label
   @public
   ###
-  input: (field, attributes, prefix) =>
-    Formtastic.prototype.input.apply(this, [field, attributes, @namespace() or prefix])
+  input: (field, attributes, prefix, raw) =>
+    Formtastic.prototype.input.apply(this, [field, attributes, @namespace() or prefix, raw])
 
   ###*
   @method inputs
+  @param [name] {String} Legend Text
   @param [options={}] {Object} Object hash
   @param fn {Function} Inner Input Fields
   @return {String} HTML String built
   ###
   inputs:=>
+    args = []
+    i = 0
+    while i < arguments.length
+      args[i] = arguments[i]
+      i++
+
+    args.push @namespace()
+    args.push true
+    Formtastic.prototype.inputs.apply(this, args)
+
+  ###*
+  @method actions
+  @param [options={}] {Object} Object hash
+  @param fn {Function} Inner Input Fields
+  @return {String} HTML String built
+  ###
+  actions:=>
     options = _.first(arguments)
     fn = _.last(arguments)
-
-    new FormtasticInputs(options, fn, @namespace(), true).render()
+    Formtastic.prototype.actions.apply(this, [options, fn, @namespace(), true])
 
   ###*
   @method namespace
   @return {String} Namespace for fieldset and inputs within
   ###
   namespace: =>
-    if @options['for']
+    if @options.for
       _.template('<%= prefix %>[<%= name %>]')({prefix: @prefix, name: @options['for']})
     else
-      _.template('<%= name %>')({prefix: @prefix})
+      _.template('<%= prefix %>')({prefix: @prefix})
 
-extend(FormtasticInputs, FormFieldset)
-
-FormtasticInputs = FormFieldset
+extend(FormtasticHelpers, FormtasticInputs)

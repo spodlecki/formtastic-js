@@ -161,6 +161,17 @@ class Form
       default_css
 
   ###*
+  Equivilant to rails' "blog_post".humanize
+  @method humanize
+  @param property {String}
+  @credit https://gist.github.com/cyberfox/1301931
+  @static
+  ###
+  @humanize: (property)->
+    property.replace(/_/g, ' ').replace /(\w+)/g, (match) ->
+      match.charAt(0).toUpperCase() + match.slice(1)
+
+  ###*
   See static method `merge_css_strings`
   @method merge_css_strings
   @private
@@ -257,7 +268,7 @@ class Form
   ###
   input: (field, attributes, prefix, raw) =>
     throw new Error("Required Parameter Missing: 'field'") unless field
-    i = FormtasticInput.Base.get_inputs_by_config(field, attributes, prefix or (@attrs and @attrs.as))
+    i = FormtasticInputBase.get_inputs_by_config(field, attributes, prefix or (@attrs and @attrs.as))
 
     if raw then i.input() else i.render()
 
@@ -265,13 +276,36 @@ class Form
   @method inputs
   @param [options={}] {Object} Object hash
   @param fn {Function} Inner Input Fields
+  @param [prefix] {String} Prefix for inputs
+  @param [nested] {Boolean} Is this input field nested?
   @return {String} HTML String built
   ###
   inputs: =>
-    options = _.first(arguments)
-    fn = _.last(arguments)
+    args = []
+    _.each(arguments, (arg, i)=>
+      if _.isString(arg) and i > 0
+        args[i] = arg || (@attrs and @attrs.as)
+      else
+        args[i] = arg
+    )
 
-    new FormtasticInputs(options, fn, @attrs.as).render()
+    unless _.isString(args[2])
+      args.push((@attrs and @attrs.as))
+
+    new FormtasticInputs(args[0], args[1], args[2], args[3], args[4], args[5]).render()
+
+  ###*
+  @method actions
+  @param [options={}] {Object} Object hash
+  @param fn {Function} Inner Input Fields
+  @return {String} HTML String built
+  ###
+  actions: (options, fn, prefix, nested)=>
+    if _.isFunction(options)
+      fn = options
+      options = undefined
+
+    new FormtasticActions(options, fn, prefix or (@attrs and @attrs.as), nested).render()
 
   ###*
   Giving access to the private function `dom` - given ability to overwrite if wanted by using the prototype.

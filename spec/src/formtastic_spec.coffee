@@ -43,11 +43,10 @@ describe 'Formtastic', ->
       @form.render()
 
   ###
-    See Specs for #input within input_spec.coffee
+    #input within formtastic_input_spec.coffee
+    #inputs within formtastic_inputs_spec.coffee
+    #actions within formtastic_actions_spec.coffee
   ###
-
-  describe '#inputs', ->
-    xit 'needs specs'
 
   describe '#generate', ->
     xit 'needs specs'

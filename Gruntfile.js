@@ -20,7 +20,9 @@ module.exports = function(grunt) {
           'js/<%= pkg.name %>.js': [
             'src/core.coffee',
             'src/helpers/*.coffee',
-            'src/formtastic*.coffee',
+            'src/formtastic.coffee',
+            'src/formtastic_input*.coffee',
+            'src/formtastic_actions.coffee',
             'src/inputs/*.coffee'
           ]
         }

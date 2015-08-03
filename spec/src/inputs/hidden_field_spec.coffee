@@ -20,4 +20,4 @@ describe '#hidden', ->
       expect(@el.find('label').length).toEqual 0
 
     it 'hides the wrapper', ->
-      expect(@el.find('form > li').attr('style')).toEqual 'display: none;'
+      expect(@el.find('form > li').attr('style')).toEqual('display: none;')

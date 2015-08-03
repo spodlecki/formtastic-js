@@ -1,0 +1,33 @@
+<html>
+<head>
+  <title>Example with Bootstrap Forms</title>
+</head>
+<body>
+  <div class="container">
+    <div id="form"></div>
+  </div>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="./../bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="./../bower_components/underscore/underscore-min.js"></script>
+  <script src="./../dist/formtastic-js.js"></script>
+  <script type="text/javascript">
+  (function() {
+    Formtastic.template = '<%= label %>' +
+                          '<div class="col-xs-10<% if (!label) { %> col-xs-offset-2<% } %>">' +
+                            '<%= input %>' +
+                            '<%= hint %>' +
+                          '</div>';
+    Formtastic.default_form_class = 'form-horizontal';
+    Formtastic.default_wrapper_tag = 'div';
+    Formtastic.default_wrapper_class = 'form-group';
+    Formtastic.default_label_class = 'col-xs-2 control-label';
+    Formtastic.default_input_class = 'form-control';
+    Formtastic.default_fieldset_inner_tag = 'div';
+    Formtastic.required_string = ' <strong data-toggle="tooltip" data-title="Required" class="required text-danger">*</strong>';
+    Formtastic.default_hint_class = 'help-block';
+    Formtastic.default_hint_tag = 'p';
+  })();
+  </script>
+  <script src="./sample.js"></script>
+</body>
+</html>

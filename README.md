@@ -20,55 +20,58 @@ Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by th
 
 **JavaScript**
 ```javascript
-var model = new Backbone.Model({ .... });
-var form = Formtastic.new(model, {as: 'blog', url: '/some/path'}, function(f) {
-  var c = [];
+(function(root) {
+  var model = {};
+  var form = new Formtastic(model, {as: 'blog', url: '/some/path'}, function(f) {
+    var c = [];
+    c.push(
+      f.inputs({name: 'Basic'}, function(b) {
+        var bf = [];
+        bf.push(b.input('title'));
+        bf.push(b.input('body', {as: 'text'}));
+        bf.push(b.input('section'));
+        // bf.push(b.input('publication_state', {as: 'radio'}));
+        bf.push(b.input('category'));
+        bf.push(b.input('allow_comments', {as: 'checkbox', label: "Allow commenting on this article"}));
+        bf.push(b.input('body'));
+        return bf.join("\n");
+      })
+    );
 
-  c.push(
-    f.inputs({name: 'Basic'}, function(b) {
-      var bf = [];
-      bf.push(b.input('title'));
-      bf.push(b.input('body', {as: 'text'}));
-      bf.push(b.input('section'));
-      bf.push(b.input('publication_state', {as: 'radio'}));
-      bf.push(b.input('category'));
-      bf.push(b.input('allow_comments', {as: 'checkbox', label: "Allow commenting on this article"}));
-      bf.push(b.input('body'));
-      return bf.join("\n");
-    })
-  );
+    c.push(
+      f.inputs("Advanced", function(b) {
+        var bf = [];
+        bf.push(b.input('keywords', {required: false, hint: "Example: ruby, rails, forms"}));
+        bf.push(b.input('extract', {required: false}));
+        bf.push(b.input('description', {required: false}));
+        bf.push(b.input('url_title', {required: false}));
+        return bf.join("\n");
+      })
+    );
 
-  c.push(
-    f.inputs("Advanced", function(b) {
-      var bf = [];
-      bf.push(b.input('keywords', {required: false, hint: "Example: ruby, rails, forms"}));
-      bf.push(b.input('extract', {required: false}));
-      bf.push(b.input('description', {required: false}));
-      bf.push(b.input('url_title', {required: false}));
-      return bf.join("\n");
-    })
-  );
+    c.push(
+      f.inputs({name: "Author", for: 'author'}, function(b) {
+        var bf = [];
+        bf.push(b.input('first_name'));
+        bf.push(b.input('last_name'));
+        return bf.join("\n");
+      })
+    );
 
-  c.push(
-    f.inputs({name: "Author", for: 'author'}, function(b) {
-      var bf = [];
-      bf.push(b.input('first_name'));
-      bf.push(b.input('last_name'));
-      return bf.join("\n");
-    })
-  );
+    c.push(
+      f.actions(function(b) {
+        var bf = [];
+        bf.push(b.action('submit', {as: 'button'}));
+        bf.push(b.action('cancel', {as: 'link'}));
+        return bf.join("\n");
+      })
+    );
 
-  c.push(
-    f.actions(function(b) {
-      var bf = [];
-      bf.push(b.action('submit', {as: 'button'}));
-      bf.push(b.action('cancel', {as: 'link'}));
-      return bf.join("\n");
-    })
-  );
-});
-
-html = f.render();
+    return c.join("\n");
+  });
+  html = form.render();
+  root.document.getElementById('form').innerHTML = html;
+})(this);
 ```
 
 **HAML Coffee**
@@ -141,7 +144,13 @@ Those really helpful form_for helpers are also available along side the `input` 
     f.text_field :field, //
     f.time_field :field,
     f.url_field :field, //
-    f.week_field :field
+    f.week_field :field,
+    f.submit(), //
+    f.cancel(), //
+    f.reset(), //
+    f.action('submit', label: 'Create Dummy') //
+    f.action('cancel', label: 'Create Dummy') //
+    f.action('reset', label: 'Create Dummy') //
   ];
   return c.join("\n");
 });
@@ -222,6 +231,12 @@ Formtastic.default_hint_tag = 'p';
   ```
 -
   **JavaScript does not currently set the value automatically**
+-
+  There is a notation to remove f.action from Formtastic. Not going into too much depth for this so skipping the wrapper part. The buttons will still display perfectly.
+  **does not exist in JavaScript**
+  ```
+  f.action(:submit, :wrapper_html => {:class => [ :my_class, :another_class ]})
+  ```
 
 ### Development
 

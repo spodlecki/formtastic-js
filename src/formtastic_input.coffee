@@ -1,29 +1,18 @@
 ###*
-@class Base
-@module FormtasticInput
+@class FormtasticInputBase
 @param object {Object} Backbone Model or Hash
 @param attributes {Object} Attributes to pass on to the <form> element
 @param fn {Function} Callback (includes html and inputs being built)
 @constructor
 ###
 
-class InputBase
+class FormtasticInputBase
   ###*
   See `Formtastic.merge_css_strings`
   @method merge_css_strings
   @private
   ###
   merge_css_strings = Formtastic.merge_css_strings
-
-  ###*
-  Equivilant to rails' "blog_post".humanize
-  @method humanize
-  @param property {String}
-  @credit https://gist.github.com/cyberfox/1301931
-  ###
-  humanize = (property)->
-    property.replace(/_/g, ' ').replace /(\w+)/g, (match) ->
-      match.charAt(0).toUpperCase() + match.slice(1)
 
   ###*
   Build a form-group using Bootstrap 3
@@ -170,7 +159,7 @@ class InputBase
   ###
   label_name: =>
     return if @attrs.label is false
-    @attrs.label || humanize(@field)
+    @attrs.label || Formtastic.humanize(@field)
 
   ###*
   @method input
@@ -231,7 +220,10 @@ class InputBase
     _.compact([
       @prefix,
       @field
-    ]).join('_').replace(/\[|\]/,'_').replace(/\s/,'')
+    ]).join('_')
+      .replace(/\[|\]/g,'_')
+      .replace(/\_\_/g,'_')
+      .replace(/\s/g,'')
 
   ###*
   @method hint
@@ -280,5 +272,3 @@ class InputBase
   ###
   generate: (builder)=>
     build_template.apply(this, [builder])
-
-FormtasticInput.Base = InputBase

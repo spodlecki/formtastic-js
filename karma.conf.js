@@ -24,11 +24,11 @@ module.exports = function(config) {
         'bower_components/underscore/underscore-min.js',
         'src/core.coffee',
         'src/helpers/*.coffee',
-        'src/formtastic*.coffee',
+        'src/formtastic.coffee',
+        'src/formtastic_input*.coffee',
+        'src/formtastic_actions.coffee',
         'src/inputs/*.coffee',
-        'spec/src/*.coffee',
-        'spec/src/helpers/*.coffee',
-        'spec/src/inputs/*.coffee'
+        'spec/src/**/*.coffee'
     ],
 
 

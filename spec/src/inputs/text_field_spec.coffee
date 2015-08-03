@@ -17,6 +17,13 @@ describe '#text', ->
     it 'builds a text area', ->
       expect(@el.find('form li textarea#blog_post').length).toEqual 1
 
+    it 'builds a text area with default input class css', ->
+      Formtastic.default_input_class = 'form-control'
+      @form = new Formtastic(@object, @attrs, (f)-> f.input('post', as: 'text', input_html: {value: 'hello'}))
+      @el = $('<div>'+@form.render()+'</div>')
+      expect(@el.find('form li textarea.form-control').length).toEqual 1
+      Formtastic.default_input_class = ''
+
     it 'builds a text area with name', ->
       expect(@el.find('form li textarea[name="blog[post]"]').length).toEqual 1
 

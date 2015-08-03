@@ -5,7 +5,7 @@
 @param attributes {Object} Field Attributes
 ###
 
-class StringFieldHelper extends FormtasticInput.Base
+class StringFieldHelper extends FormtasticInputBase
   constructor: (field, attributes, prefix)->
     super(field, attributes, prefix)
 

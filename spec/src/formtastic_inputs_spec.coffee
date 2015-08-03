@@ -1,4 +1,52 @@
 describe '#inputs', ->
+  describe 'can use direct helpers', ->
+    beforeEach ->
+      @object = Object.create({bam: 'bam'})
+      @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+      @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f2)-> ['<li>',f2.label('winner'), f2.text_field('win'),'</li>'].join('') ) )
+      @output = @form.render()
+      @el = $(@output)
+
+    it 'renders fieldset with label and text', ->
+      expect(@el.find('fieldset > ol > li > label').length).toEqual 1
+      expect(@el.find('fieldset > ol > li > label[for="win"]').length).toEqual 0
+      expect(@el.find('fieldset > ol > li > input[type="text"][name="blog[win]"]').length).toEqual 1
+
+  describe 'param String, Config, Fn', ->
+    beforeEach ->
+      @object = Object.create({bam: 'bam'})
+      @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+      @form = new Formtastic(@object, @attrs, (f)->
+        f.inputs({name: 'Basic'}, (f2)->
+          [
+            '<li>',
+            f2.label('winner'),
+            f2.text_field('win'),
+            '</li>',
+            f2.inputs('Private', {for: 'pm'}, (f3)->
+              [
+                f3.input('category'),
+                f3.input('colors', {as: 'select', collection: [{value: '1', text: 'Blue'}, {value: '2', text: 'Green'}, {value: '3', text: 'Red'}]})
+              ].join("\n")
+            )
+          ].join('')
+        )
+      )
+      @output = @form.render()
+      @el = $('<div>'+@output+'</div>')
+
+    it 'should have first legend with "Basic"', ->
+      expect(@el.find('form > fieldset > legend').text()).toEqual 'Basic'
+
+    it 'has 2nd fieldset for the nested item with legend', ->
+      expect(@el.find('fieldset[for="pm"] legend').text()).toEqual 'Private'
+
+    it 'has the nested with namespace inputs', ->
+      expect(@el.find('fieldset input[name="blog[pm][category]"]').length).toEqual 1
+
+    it 'has the nested select inputs', ->
+      expect(@el.find('fieldset select[name="blog[pm][colors]"]').length).toEqual 1
+
   describe 'with a block (block forms syntax)', ->
     describe 'when no options are provided', ->
       beforeEach ->
@@ -154,8 +202,12 @@ describe '#inputs', ->
 
       describe "when double nested", ->
         beforeEach ->
-          @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.inputs((f2)-> f2.inputs((f3)->f3.input('login')))))
+          @form = new Formtastic(@object, @attrs, (f)-> f.inputs('Author', {for: 'author'}, (f1)-> f1.inputs({for: 'biller'}, (f2)-> f2.inputs((f3)->f3.input('login')))))
           @el = $('<div>'+@form.render()+'</div>')
 
         it "should wrap the nested inputs in an li block to maintain HTML validity", ->
           expect(@el.find('form > fieldset.inputs > div > div > fieldset.inputs > div > div > fieldset.inputs > div').length).toEqual 1
+
+
+        it "should not have double underscores", ->
+          expect(/\_\_/.test(@form.render())).toBeFalsy()

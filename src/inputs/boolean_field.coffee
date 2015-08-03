@@ -1,11 +1,12 @@
 ###*
 @class BooleanFieldHelper
 @module FormtasticInput
+@extend FormtasticInputBase
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###
 
-class BooleanFieldHelper extends FormtasticInput.Base
+class BooleanFieldHelper extends FormtasticInputBase
 
   _label_node: =>
     null
@@ -40,7 +41,7 @@ class BooleanFieldHelper extends FormtasticInput.Base
 
     input_config = _.extend(_.clone(defaults), @attrs.input_html)
     checkbox = @createNode(input_config)
-    container = FormtasticInput.Base.prototype._label_node.apply(this, [true])
+    container = FormtasticInputBase.prototype._label_node.apply(this, [true])
     container.innerHTML = checkbox + ' ' + @label_name()
     container.className = ''
 

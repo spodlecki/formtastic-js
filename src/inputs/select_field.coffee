@@ -6,7 +6,7 @@
 @param prefix {String} Form input name's prefix ex: `blog[title]` where prefix='blog'
 ###
 
-class SelectFieldHelper extends FormtasticInput.Base
+class SelectFieldHelper extends FormtasticInputBase
   constructor: (field, attributes, prefix)->
     throw new Error("Missing :collection for select box.") if typeof(attributes.collection) == 'undefined'
     super(field, attributes, prefix)
@@ -18,7 +18,7 @@ class SelectFieldHelper extends FormtasticInput.Base
       name: @input_name()
       multiple: @attrs.multiple
       required: @required
-      class: @constructor.default_input_class
+      class: Formtastic.default_input_class
 
     input_config = _.extend(defaults, @attrs.input_html)
     ele = @createNode(input_config, true)

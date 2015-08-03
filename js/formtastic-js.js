@@ -1,5 +1,5 @@
 (function() {
-  var BooleanFieldHelper, Form, FormFieldset, FormtasticHelpers, FormtasticInput, FormtasticInputs, HiddenFieldHelper, InputBase, SelectFieldHelper, StringFieldHelper, TextFieldHelper, extend,
+  var BooleanFieldHelper, Form, FormtasticActions, FormtasticHelpers, FormtasticInput, FormtasticInputBase, FormtasticInputs, HiddenFieldHelper, SelectFieldHelper, StringFieldHelper, TextFieldHelper, extend,
     hasProp = {}.hasOwnProperty,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -38,6 +38,105 @@
   }, {
     chain: false
   });
+
+
+  /**
+  @for Formtastic
+  @method action
+  @param type {String} submit|reset|cancel|commit
+  @param attrs {Object} Action Input Attributes
+   */
+
+  FormtasticHelpers.action = function(type, attrs) {
+    var cfg, ele, tag, text, validate;
+    type = (function(type) {
+      type = type || '';
+      switch (type.toLowerCase()) {
+        case 'reset':
+        case 'submit':
+        case 'cancel':
+          return type.toLowerCase();
+        default:
+          return void 0;
+      }
+    })(type);
+    if (!type) {
+      throw new Error("Type required for action. submit|reset|cancel|commit");
+    }
+    text = (function(text, attrs) {
+      if (attrs && attrs.label) {
+        return attrs.label;
+      } else if (text) {
+        return Formtastic.humanize(text);
+      }
+    })(type, attrs);
+    tag = (function(attrs, type) {
+      var as;
+      as = attrs && attrs.as;
+      switch (as) {
+        case 'button':
+        case 'input':
+          return as;
+        case 'btn':
+          return 'button';
+        case 'link':
+          return 'a';
+        default:
+          switch (type) {
+            case 'reset':
+            case 'submit':
+              return 'input';
+            case 'cancel':
+              return 'a';
+          }
+      }
+    })(attrs, type);
+    validate = (function(type, tag) {
+      if (type === 'submit' && tag === 'a') {
+        return false;
+      } else if (type === 'cancel' && (tag === 'input' || tag === 'button')) {
+        return false;
+      } else {
+        return true;
+      }
+    })(type, tag);
+    if (!validate) {
+      throw new Error("Unsupported :as for '" + type + "'");
+    }
+    cfg = _.extend({
+      tag: tag,
+      type: type
+    }, attrs);
+    if (tag === 'a') {
+      delete cfg.type;
+    }
+    ele = this.createNode(cfg, true);
+    if (tag === 'button') {
+      ele.innerHTML = text;
+    } else if (tag === 'a') {
+      ele.innerHTML = text;
+      ele.href = (attrs && attrs.href) || "javascript:window.history.back();";
+    } else {
+      ele.value = text;
+    }
+    return ele.outerHTML;
+  };
+
+
+  /**
+  @for Formtastic
+  @method cancel
+  @param text {String} Button / Input Value
+  @param attrs {Object} Action Input Attributes
+   */
+
+  FormtasticHelpers.cancel = function(text, attrs) {
+    var cfg;
+    cfg = _.extend({
+      label: text
+    }, attrs);
+    return this.action('cancel', cfg);
+  };
 
 
   /**
@@ -157,6 +256,22 @@
 
   /**
   @for Formtastic
+  @method reset
+  @param text {String} Button / Input Value
+  @param attrs {Object} Action Input Attributes
+   */
+
+  FormtasticHelpers.reset = function(text, attrs) {
+    var cfg;
+    cfg = _.extend({
+      label: text
+    }, attrs);
+    return this.action('reset', cfg);
+  };
+
+
+  /**
+  @for Formtastic
   @method search_field
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
@@ -182,6 +297,22 @@
       as: 'select'
     }, attrs);
     return this.input(field, attrs);
+  };
+
+
+  /**
+  @for Formtastic
+  @method submit
+  @param text {String} Button / Input Value
+  @param attrs {Object} Action Input Attributes
+   */
+
+  FormtasticHelpers.submit = function(text, attrs) {
+    var cfg;
+    cfg = _.extend({
+      label: text
+    }, attrs);
+    return this.action('submit', cfg);
   };
 
 
@@ -434,6 +565,21 @@
 
 
     /**
+    Equivilant to rails' "blog_post".humanize
+    @method humanize
+    @param property {String}
+    @credit https://gist.github.com/cyberfox/1301931
+    @static
+     */
+
+    Form.humanize = function(property) {
+      return property.replace(/_/g, ' ').replace(/(\w+)/g, function(match) {
+        return match.charAt(0).toUpperCase() + match.slice(1);
+      });
+    };
+
+
+    /**
     See static method `merge_css_strings`
     @method merge_css_strings
     @private
@@ -528,6 +674,7 @@
 
     function Form(object, attrs) {
       this.createNode = bind(this.createNode, this);
+      this.actions = bind(this.actions, this);
       this.inputs = bind(this.inputs, this);
       this.input = bind(this.input, this);
       this.render = bind(this.render, this);
@@ -571,7 +718,7 @@
       if (!field) {
         throw new Error("Required Parameter Missing: 'field'");
       }
-      i = FormtasticInput.Base.get_inputs_by_config(field, attributes, prefix || (this.attrs && this.attrs.as));
+      i = FormtasticInputBase.get_inputs_by_config(field, attributes, prefix || (this.attrs && this.attrs.as));
       if (raw) {
         return i.input();
       } else {
@@ -584,14 +731,43 @@
     @method inputs
     @param [options={}] {Object} Object hash
     @param fn {Function} Inner Input Fields
+    @param [prefix] {String} Prefix for inputs
+    @param [nested] {Boolean} Is this input field nested?
     @return {String} HTML String built
      */
 
     Form.prototype.inputs = function() {
-      var fn, options;
-      options = _.first(arguments);
-      fn = _.last(arguments);
-      return new FormtasticInputs(options, fn, this.attrs.as).render();
+      var args;
+      args = [];
+      _.each(arguments, (function(_this) {
+        return function(arg, i) {
+          if (_.isString(arg) && i > 0) {
+            return args[i] = arg || (_this.attrs && _this.attrs.as);
+          } else {
+            return args[i] = arg;
+          }
+        };
+      })(this));
+      if (!_.isString(args[2])) {
+        args.push(this.attrs && this.attrs.as);
+      }
+      return new FormtasticInputs(args[0], args[1], args[2], args[3], args[4], args[5]).render();
+    };
+
+
+    /**
+    @method actions
+    @param [options={}] {Object} Object hash
+    @param fn {Function} Inner Input Fields
+    @return {String} HTML String built
+     */
+
+    Form.prototype.actions = function(options, fn, prefix, nested) {
+      if (_.isFunction(options)) {
+        fn = options;
+        options = void 0;
+      }
+      return new FormtasticActions(options, fn, prefix || (this.attrs && this.attrs.as), nested).render();
     };
 
 
@@ -633,38 +809,23 @@
 
 
   /**
-  @class Base
-  @module FormtasticInput
+  @class FormtasticInputBase
   @param object {Object} Backbone Model or Hash
   @param attributes {Object} Attributes to pass on to the <form> element
   @param fn {Function} Callback (includes html and inputs being built)
   @constructor
    */
 
-  InputBase = (function() {
+  FormtasticInputBase = (function() {
 
     /**
     See `Formtastic.merge_css_strings`
     @method merge_css_strings
     @private
      */
-    var build_template, humanize, merge_css_strings, translate_field;
+    var build_template, merge_css_strings, translate_field;
 
     merge_css_strings = Formtastic.merge_css_strings;
-
-
-    /**
-    Equivilant to rails' "blog_post".humanize
-    @method humanize
-    @param property {String}
-    @credit https://gist.github.com/cyberfox/1301931
-     */
-
-    humanize = function(property) {
-      return property.replace(/_/g, ' ').replace(/(\w+)/g, function(match) {
-        return match.charAt(0).toUpperCase() + match.slice(1);
-      });
-    };
 
 
     /**
@@ -741,7 +902,7 @@
     @static
      */
 
-    InputBase.get_inputs_by_config = function(field, attrs, prefix) {
+    FormtasticInputBase.get_inputs_by_config = function(field, attrs, prefix) {
       var as, result;
       as = translate_field(field, attrs);
       attrs = _.extend({
@@ -781,7 +942,7 @@
       })();
     };
 
-    function InputBase(field, attrs) {
+    function FormtasticInputBase(field, attrs) {
       this.generate = bind(this.generate, this);
       this.wrapper = bind(this.wrapper, this);
       this.hint = bind(this.hint, this);
@@ -810,7 +971,7 @@
     @public
      */
 
-    InputBase.prototype.createNode = function() {
+    FormtasticInputBase.prototype.createNode = function() {
       return Formtastic.createNode.apply(this, arguments);
     };
 
@@ -822,7 +983,7 @@
     @public
      */
 
-    InputBase.prototype.render = function() {
+    FormtasticInputBase.prototype.render = function() {
       var result;
       result = {
         label: this._label_node(),
@@ -840,7 +1001,7 @@
     @public
      */
 
-    InputBase.prototype._label_node = function(dom) {
+    FormtasticInputBase.prototype._label_node = function(dom) {
       var defaults, ele, label_config;
       if (!this.label_name()) {
         return null;
@@ -873,11 +1034,11 @@
     @public
      */
 
-    InputBase.prototype.label_name = function() {
+    FormtasticInputBase.prototype.label_name = function() {
       if (this.attrs.label === false) {
         return;
       }
-      return this.attrs.label || humanize(this.field);
+      return this.attrs.label || Formtastic.humanize(this.field);
     };
 
 
@@ -887,7 +1048,7 @@
     @public
      */
 
-    InputBase.prototype.input = function(config) {
+    FormtasticInputBase.prototype.input = function(config) {
       var defaults, ele, input_config;
       defaults = {
         placeholder: this.label_name(),
@@ -914,7 +1075,7 @@
     @public
      */
 
-    InputBase.prototype.input_name = function() {
+    FormtasticInputBase.prototype.input_name = function() {
       if (this.attrs.input_html && this.attrs.input_html.name) {
         return this.attrs.input_html.name;
       } else {
@@ -941,7 +1102,7 @@
     @beta
      */
 
-    InputBase.prototype.input_value = function() {
+    FormtasticInputBase.prototype.input_value = function() {
       return null;
     };
 
@@ -953,11 +1114,11 @@
     @public
      */
 
-    InputBase.prototype.generated_id = function() {
+    FormtasticInputBase.prototype.generated_id = function() {
       if (this.attrs.id) {
         return this.attrs.id;
       }
-      return _.compact([this.prefix, this.field]).join('_').replace(/\[|\]/, '_').replace(/\s/, '');
+      return _.compact([this.prefix, this.field]).join('_').replace(/\[|\]/g, '_').replace(/\_\_/g, '_').replace(/\s/g, '');
     };
 
 
@@ -967,7 +1128,7 @@
     @public
      */
 
-    InputBase.prototype.hint = function() {
+    FormtasticInputBase.prototype.hint = function() {
       var hint;
       if (!this.attrs.hint) {
         return null;
@@ -987,7 +1148,7 @@
     @public
      */
 
-    InputBase.prototype.wrapper = function() {
+    FormtasticInputBase.prototype.wrapper = function() {
       var defaults, wrapper_config, wrapper_css;
       wrapper_css = _.compact([this.as, Formtastic.default_wrapper_class, (this.required ? 'required' : 'optional'), 'input']).join(' ');
       wrapper_css = merge_css_strings(wrapper_css, this.attrs, 'wrapper_html.class');
@@ -1015,20 +1176,17 @@
     @public
      */
 
-    InputBase.prototype.generate = function(builder) {
+    FormtasticInputBase.prototype.generate = function(builder) {
       return build_template.apply(this, [builder]);
     };
 
-    return InputBase;
+    return FormtasticInputBase;
 
   })();
 
-  FormtasticInput.Base = InputBase;
-
 
   /**
-  @class Inputs
-  @module Formtastic
+  @class FormtasticInputs
   @param object {Mixed} Options
   @param fn {Function} Callback (includes html and inputs being built)
   @param prefix {String} Prefix / Name of Fieldset
@@ -1036,31 +1194,10 @@
   @constructor
    */
 
-  FormFieldset = (function() {
-    var set_callback, set_options;
-
-    set_options = function(options) {
-      if (_.isFunction(options)) {
-        return this.options = {};
-      } else if (_.isObject(options)) {
-        options.name || (options.name = options.title);
-        delete options.title;
-        return this.options = options;
-      } else if (_.isString(options)) {
-        return this.options = {
-          name: options
-        };
-      } else {
-        return this.options = {};
-      }
-    };
-
-    set_callback = function(fn) {
-      return this.cb = _.isFunction(fn) ? fn : null;
-    };
-
-    function FormFieldset(options, fn, prefix, nested) {
+  FormtasticInputs = (function() {
+    function FormtasticInputs() {
       this.namespace = bind(this.namespace, this);
+      this.actions = bind(this.actions, this);
       this.inputs = bind(this.inputs, this);
       this.input = bind(this.input, this);
       this.container = bind(this.container, this);
@@ -1068,10 +1205,35 @@
       this.fieldset = bind(this.fieldset, this);
       this.render = bind(this.render, this);
       this.createNode = bind(this.createNode, this);
-      set_options.apply(this, [options]);
-      set_callback.apply(this, [fn]);
-      this.prefix = prefix;
-      this.nested = nested;
+      var args;
+      args = _.compact(arguments);
+      this.options = {};
+      this.cb = void 0;
+      this.nested = false;
+      this.prefix = void 0;
+      _.each(args, (function(_this) {
+        return function(arg, i) {
+          if (_.isFunction(arg)) {
+            return _this.cb = arg;
+          } else if (_.isBoolean(arg)) {
+            return _this.nested = arg;
+          } else if (_.isObject(arg)) {
+            if (!_this.options.name) {
+              arg.name = arg.name ? arg.name : arg.title;
+              delete arg.title;
+            }
+            return _.extend(_this.options, arg);
+          } else if (_.isString(arg) && i === 0) {
+            return _this.options = {
+              name: arg
+            };
+          } else if (_.isString(arg)) {
+            return _this.prefix = arg;
+          }
+        };
+      })(this));
+      this.tag = 'fieldset';
+      this.css_class = 'inputs';
     }
 
 
@@ -1081,7 +1243,7 @@
     @public
      */
 
-    FormFieldset.prototype.createNode = function() {
+    FormtasticInputs.prototype.createNode = function() {
       return Formtastic.createNode.apply(this, arguments);
     };
 
@@ -1093,7 +1255,7 @@
     @public
      */
 
-    FormFieldset.prototype.render = function() {
+    FormtasticInputs.prototype.render = function() {
       var container, fieldset, legend, li;
       fieldset = this.fieldset();
       container = this.container();
@@ -1120,13 +1282,14 @@
     @public
      */
 
-    FormFieldset.prototype.fieldset = function() {
+    FormtasticInputs.prototype.fieldset = function() {
       var cfg, defaults;
       defaults = {
-        tag: 'fieldset',
-        "class": 'inputs'
+        tag: this.tag,
+        "class": this.css_class
       };
       cfg = _.extend(defaults, this.options);
+      delete cfg.name;
       return this.createNode(cfg, true);
     };
 
@@ -1137,7 +1300,7 @@
     @public
      */
 
-    FormFieldset.prototype.legend = function() {
+    FormtasticInputs.prototype.legend = function() {
       var legend;
       if (!this.options.name) {
         return '';
@@ -1156,7 +1319,7 @@
     @public
      */
 
-    FormFieldset.prototype.container = function() {
+    FormtasticInputs.prototype.container = function() {
       return this.createNode({
         tag: Formtastic.default_fieldset_inner_tag
       }, true);
@@ -1171,23 +1334,45 @@
     @public
      */
 
-    FormFieldset.prototype.input = function(field, attributes, prefix) {
-      return Formtastic.prototype.input.apply(this, [field, attributes, this.namespace() || prefix]);
+    FormtasticInputs.prototype.input = function(field, attributes, prefix, raw) {
+      return Formtastic.prototype.input.apply(this, [field, attributes, this.namespace() || prefix, raw]);
     };
 
 
     /**
     @method inputs
+    @param [name] {String} Legend Text
     @param [options={}] {Object} Object hash
     @param fn {Function} Inner Input Fields
     @return {String} HTML String built
      */
 
-    FormFieldset.prototype.inputs = function() {
+    FormtasticInputs.prototype.inputs = function() {
+      var args, i;
+      args = [];
+      i = 0;
+      while (i < arguments.length) {
+        args[i] = arguments[i];
+        i++;
+      }
+      args.push(this.namespace());
+      args.push(true);
+      return Formtastic.prototype.inputs.apply(this, args);
+    };
+
+
+    /**
+    @method actions
+    @param [options={}] {Object} Object hash
+    @param fn {Function} Inner Input Fields
+    @return {String} HTML String built
+     */
+
+    FormtasticInputs.prototype.actions = function() {
       var fn, options;
       options = _.first(arguments);
       fn = _.last(arguments);
-      return new FormtasticInputs(options, fn, this.namespace(), true).render();
+      return Formtastic.prototype.actions.apply(this, [options, fn, this.namespace(), true]);
     };
 
 
@@ -1196,31 +1381,49 @@
     @return {String} Namespace for fieldset and inputs within
      */
 
-    FormFieldset.prototype.namespace = function() {
-      if (this.options['for']) {
+    FormtasticInputs.prototype.namespace = function() {
+      if (this.options["for"]) {
         return _.template('<%= prefix %>[<%= name %>]')({
           prefix: this.prefix,
           name: this.options['for']
         });
       } else {
-        return _.template('<%= name %>')({
+        return _.template('<%= prefix %>')({
           prefix: this.prefix
         });
       }
     };
 
-    return FormFieldset;
+    return FormtasticInputs;
 
   })();
 
-  extend(FormtasticInputs, FormFieldset);
+  extend(FormtasticHelpers, FormtasticInputs);
 
-  FormtasticInputs = FormFieldset;
+
+  /**
+  @class FormtasticActions
+  @extends FormtasticInputs
+  @constructor
+   */
+
+  FormtasticActions = (function(superClass) {
+    extend1(FormtasticActions, superClass);
+
+    function FormtasticActions(options, fn, prefix, nested) {
+      FormtasticActions.__super__.constructor.call(this, options, fn, prefix, nested);
+      this.css_class = 'actions';
+    }
+
+    return FormtasticActions;
+
+  })(FormtasticInputs);
 
 
   /**
   @class BooleanFieldHelper
   @module FormtasticInput
+  @extend FormtasticInputBase
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
@@ -1284,7 +1487,7 @@
       }
       input_config = _.extend(_.clone(defaults), this.attrs.input_html);
       checkbox = this.createNode(input_config);
-      container = FormtasticInput.Base.prototype._label_node.apply(this, [true]);
+      container = FormtasticInputBase.prototype._label_node.apply(this, [true]);
       container.innerHTML = checkbox + ' ' + this.label_name();
       container.className = '';
       return _hidden_field(_.clone(defaults)) + container.outerHTML;
@@ -1292,7 +1495,7 @@
 
     return BooleanFieldHelper;
 
-  })(FormtasticInput.Base);
+  })(FormtasticInputBase);
 
   FormtasticInput.BooleanFieldHelper = BooleanFieldHelper;
 
@@ -1320,13 +1523,13 @@
     HiddenFieldHelper.prototype.wrapper = function() {
       var node;
       node = HiddenFieldHelper.__super__.wrapper.apply(this, arguments);
-      node.style = "display: none;";
+      node.setAttribute('style', "display: none;");
       return node;
     };
 
     return HiddenFieldHelper;
 
-  })(FormtasticInput.Base);
+  })(FormtasticInputBase);
 
   FormtasticInput.HiddenFieldHelper = HiddenFieldHelper;
 
@@ -1358,7 +1561,7 @@
         name: this.input_name(),
         multiple: this.attrs.multiple,
         required: this.required,
-        "class": this.constructor.default_input_class
+        "class": Formtastic.default_input_class
       };
       input_config = _.extend(defaults, this.attrs.input_html);
       ele = this.createNode(input_config, true);
@@ -1391,7 +1594,7 @@
 
     return SelectFieldHelper;
 
-  })(FormtasticInput.Base);
+  })(FormtasticInputBase);
 
   FormtasticInput.SelectFieldHelper = SelectFieldHelper;
 
@@ -1412,7 +1615,7 @@
 
     return StringFieldHelper;
 
-  })(FormtasticInput.Base);
+  })(FormtasticInputBase);
 
   FormtasticInput.StringFieldHelper = StringFieldHelper;
 
@@ -1441,14 +1644,14 @@
         type: (this.as === 'string' ? 'text' : this.as),
         name: this.input_name(),
         required: this.required,
-        "class": this.constructor.default_input_class,
+        "class": Formtastic.default_input_class,
         id: this.generated_id()
       };
       if (!this.required) {
         delete defaults.required;
       }
       input_config = _.extend(defaults, this.attrs.input_html);
-      value = input_config['value'];
+      value = input_config['value'] || '';
       delete input_config['value'];
       delete input_config.type;
       delete input_config['as'];
@@ -1459,7 +1662,7 @@
 
     return TextFieldHelper;
 
-  })(FormtasticInput.Base);
+  })(FormtasticInputBase);
 
   FormtasticInput.TextFieldHelper = TextFieldHelper;
 
