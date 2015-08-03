@@ -6,6 +6,10 @@ While there is a large test suite at the moment, there are missing inputs still.
 
 Formtastic JS is a JS FormBuilder DSL that aims to duplicate the API given by the [Rails Gem Formtastic](https://github.com/justinfrench/formtastic). The goal of this project is to simply duplicate assumptions from the Rails Gem into the JavaScript project. Please see examples and tests for better coverage details.
 
+### Installation
+
+    bower install formtastic-js
+
 ### Production Dependency
 
 - [underscore.js](http://underscorejs.org/)

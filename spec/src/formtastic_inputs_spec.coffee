@@ -86,16 +86,63 @@ describe '#inputs', ->
           expect(@el[0].outerHTML).toEqual '<fieldset class="inputs"></fieldset>'
 
     describe 'nesting', ->
+      describe 'with defaults', ->
+        beforeEach ->
+          Formtastic.template = '<%= label %><%= input %><%= hint %>';
+          Formtastic.default_form_class = 'formtastic';
+          Formtastic.default_wrapper_tag = 'li';
+          Formtastic.default_wrapper_class = '';
+          Formtastic.default_label_class = 'label';
+          Formtastic.default_input_class = '';
+          Formtastic.default_fieldset_inner_tag = 'ol';
+          Formtastic.required_string = '*';
+          Formtastic.default_hint_class = 'inline-hints';
+          Formtastic.default_hint_tag = 'p';
+          @object = Object.create({bam: 'bam'})
+          @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+
+        describe "when not nested", ->
+          beforeEach ->
+            @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.input('login')))
+            @el = $('<div>'+@form.render()+'</div>')
+
+          it 'has a form > fieldset > ol > li', ->
+            expect(@el.find('form > fieldset > ol > li').length).toEqual 1
+
+        describe "when nested (with block)", ->
+          beforeEach ->
+            @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.inputs((f2)-> f2.input('login'))))
+            @el = $('<div>'+@form.render()+'</div>')
+
+          it "should wrap the nested inputs in an li block to maintain HTML validity", ->
+            expect(@el.find('form > fieldset.inputs > ol > li > fieldset.inputs > ol').length).toEqual 1
+
+        describe "when double nested", ->
+          beforeEach ->
+            @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.inputs((f2)-> f2.inputs((f3)->f3.input('login')))))
+            @el = $('<div>'+@form.render()+'</div>')
+
+          it "should wrap the nested inputs in an li block to maintain HTML validity", ->
+            expect(@el.find('form > fieldset.inputs > ol > li > fieldset.inputs > ol > li > fieldset.inputs > ol').length).toEqual 1
+
+    describe 'with custom attrs', ->
       beforeEach ->
+        Formtastic.default_wrapper_tag = 'div';
+        Formtastic.default_fieldset_inner_tag = 'div';
         @object = Object.create({bam: 'bam'})
         @attrs = {label: 'World', as: 'blog', url: 'http://test.host'}
+
+      afterEach ->
+        Formtastic.default_wrapper_tag = 'li';
+        Formtastic.default_fieldset_inner_tag = 'ol';
+
       describe "when not nested", ->
         beforeEach ->
           @form = new Formtastic(@object, @attrs, (f)-> f.inputs((f1)-> f1.input('login')))
           @el = $('<div>'+@form.render()+'</div>')
 
-        it 'has a form > fieldset > ol > li', ->
-          expect(@el.find('form > fieldset > ol > li').length).toEqual 1
+        it 'has a form > fieldset > div > div', ->
+          expect(@el.find('form > fieldset > div > div').length).toEqual 1
 
       describe "when nested (with block)", ->
         beforeEach ->
@@ -103,7 +150,7 @@ describe '#inputs', ->
           @el = $('<div>'+@form.render()+'</div>')
 
         it "should wrap the nested inputs in an li block to maintain HTML validity", ->
-          expect(@el.find('form > fieldset.inputs > ol > li > fieldset.inputs > ol').length).toEqual 1
+          expect(@el.find('form > fieldset.inputs > div > div > fieldset.inputs > div').length).toEqual 1
 
       describe "when double nested", ->
         beforeEach ->
@@ -111,4 +158,4 @@ describe '#inputs', ->
           @el = $('<div>'+@form.render()+'</div>')
 
         it "should wrap the nested inputs in an li block to maintain HTML validity", ->
-          expect(@el.find('form > fieldset.inputs > ol > li > fieldset.inputs > ol > li > fieldset.inputs > ol').length).toEqual 1
+          expect(@el.find('form > fieldset.inputs > div > div > fieldset.inputs > div > div > fieldset.inputs > div').length).toEqual 1

@@ -54,7 +54,7 @@ class FormFieldset
       fieldset.innerHTML = legend + container.outerHTML
 
     if @nested
-      li = @createNode({tag: 'li'}, true)
+      li = @createNode({tag: Formtastic.default_wrapper_tag}, true)
       li.innerHTML = fieldset.outerHTML
       li.outerHTML
     else
@@ -109,7 +109,7 @@ class FormFieldset
   @param fn {Function} Inner Input Fields
   @return {String} HTML String built
   ###
-  inputs: =>
+  inputs:=>
     options = _.first(arguments)
     fn = _.last(arguments)
 
