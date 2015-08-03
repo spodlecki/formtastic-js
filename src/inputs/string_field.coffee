@@ -24,6 +24,6 @@ this.Formtastic.Input.StringFieldHelper = StringFieldHelper
 ###
 this.Formtastic.Inputs.string_field = (field, attrs)->
   attrs = _.extend({input_html: {}, attrs})
-  attrs['input_html']['type'] ||= 'text'
+  attrs.input_html['type'] ||= 'text'
 
   @input(field, attrs)

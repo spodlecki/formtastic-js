@@ -25,7 +25,7 @@ class SelectFieldHelper extends Formtastic.Input.Base
       required: @required
       class: @constructor.default_input_class
 
-    input_config = _.extend(defaults, @attrs['input_html'])
+    input_config = _.extend(defaults, @attrs.input_html)
     ele = @createNode(input_config, true)
 
     option = (item)=>
@@ -61,5 +61,5 @@ this.Formtastic.Input.SelectFieldHelper = SelectFieldHelper
 ###
 this.Formtastic.Inputs.select_field = (field, attrs)->
   attrs = _.extend({}, attrs)
-  attrs['as'] = 'select'
+  attrs.as = 'select'
   @input(field, attrs)

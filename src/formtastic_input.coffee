@@ -39,7 +39,7 @@ class InputBase
   build_template = (builder)->
     container = builder.wrapper
     template = _.template(Formtastic.template)
-    container.innerHTML = template({input: builder['input'], label: builder['label'], hint: builder['hint'], attrs: @attrs})
+    container.innerHTML = template({input: builder.input, label: builder.label, hint: builder.hint, attrs: @attrs})
     container.outerHTML
 
   ###*
@@ -59,14 +59,14 @@ class InputBase
   ###
   translate_field = (field, attrs)->
     attrs = _.extend({}, attrs)
-    as = attrs['as']
+    as = attrs.as
 
     return as if as
     return if /^(.+\_)?password(\_.+)?$/.test(field)
       'password'
     else if /^.+\_id$/.test(field)
       'number'
-    else if typeof(attrs['collection']) != 'undefined' and attrs['collection'].length > 0
+    else if typeof(attrs.collection) != 'undefined' and attrs.collection.length > 0
       'select'
     else if /^(.+)?(phone|fax)(\_.+)?$/.test(field)
       'phone'
@@ -124,9 +124,9 @@ class InputBase
 
     @field = field
     @attrs = attrs
-    @as = attrs['as']
-    @required = attrs['required']
-    @prefix = attrs['prefix']
+    @as = attrs.as
+    @required = attrs.required
+    @prefix = attrs.prefix
 
   ###*
   See `Formtastic.createNode`
@@ -168,7 +168,7 @@ class InputBase
       delete @attrs.label_html['class']
     catch
 
-    label_config = _.extend(defaults, @attrs['label_html'])
+    label_config = _.extend(defaults, @attrs.label_html)
 
     ele = @createNode(label_config, true)
     ele.innerHTML = @label_name() + (if @required then Formtastic.required_string else '')
@@ -182,8 +182,8 @@ class InputBase
   @public
   ###
   label_name: =>
-    return if @attrs['label'] is false
-    @attrs['label'] || humanize(@field)
+    return if @attrs.label is false
+    @attrs.label || humanize(@field)
 
   ###*
   @method input
@@ -202,9 +202,9 @@ class InputBase
 
     defaults = _.extend(defaults, config)
 
-    delete defaults['required'] unless @required
+    delete defaults.required unless @required
 
-    input_config = _.extend(defaults, @attrs['input_html'])
+    input_config = _.extend(defaults, @attrs.input_html)
     ele = @createNode(input_config, true)
     ele.outerHTML
 
@@ -214,8 +214,8 @@ class InputBase
   @public
   ###
   input_name: =>
-    if @attrs['input_html'] and @attrs['input_html']['name']
-      @attrs['input_html']['name']
+    if @attrs.input_html and @attrs.input_html['name']
+      @attrs.input_html['name']
     else
       if @prefix
         _.template('<%= prefix %>[<%= name %>]')({prefix: @prefix, name: @field})
@@ -252,9 +252,9 @@ class InputBase
   @public
   ###
   hint:=>
-    return null unless @attrs['hint']
+    return null unless @attrs.hint
     hint = @createNode({tag: Formtastic.default_hint_tag, class: Formtastic.default_hint_class}, true)
-    hint.innerHTML = @attrs['hint']
+    hint.innerHTML = @attrs.hint
     hint.outerHTML
 
   ###*
@@ -280,7 +280,7 @@ class InputBase
       class: wrapper_css
       id: @generated_id()+'_input'
 
-    wrapper_config = _.extend(defaults, @attrs['wrapper_html'])
+    wrapper_config = _.extend(defaults, @attrs.wrapper_html)
     @createNode(wrapper_config, true)
 
   ###*

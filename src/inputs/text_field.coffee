@@ -26,7 +26,7 @@ class TextFieldHelper extends Formtastic.Input.Base
 
     delete defaults['required'] unless @required
 
-    input_config = _.extend(defaults, @attrs['input_html'])
+    input_config = _.extend(defaults, @attrs.input_html)
     value = input_config['value']
     delete input_config['value']
     delete input_config['type']
@@ -47,5 +47,5 @@ this.Formtastic.Input.TextFieldHelper = TextFieldHelper
 ###
 this.Formtastic.Inputs.textarea_field = (field, attrs)->
   attrs = _.extend({}, attrs)
-  attrs['as'] = 'text'
+  attrs.as = 'text'
   @input(field, attrs)

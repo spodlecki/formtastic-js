@@ -238,14 +238,14 @@
 
     dom = function(attributes, dom_node) {
       var ele, key, value;
-      if (dom_node == null) {
+      if (typeof dom_node === 'undefined') {
         dom_node = false;
       }
       if (!attributes.tag) {
         throw new Error("Can't create a DOM Node without a tag.");
       }
       ele = document.createElement(attributes.tag);
-      delete attributes['tag'];
+      delete attributes.tag;
       for (key in attributes) {
         if (!hasProp.call(attributes, key)) continue;
         value = attributes[key];
@@ -271,7 +271,7 @@
 
     form = function(attrs) {
       var css_class;
-      attrs['action'] || (attrs['action'] = attrs['url']);
+      attrs.action || (attrs.action = attrs.url);
       css_class = merge_css_strings(this.constructor.default_form_class, attrs, 'class');
       delete attrs['class'];
       attrs = _.extend({
@@ -279,13 +279,13 @@
         action: this.constructor.default_form_action,
         "class": css_class
       }, attrs);
-      delete attrs['as'];
-      delete attrs['wrapper_html'];
-      delete attrs['input_html'];
-      delete attrs['label'];
-      delete attrs['url'];
-      delete attrs['label_html'];
-      delete attrs['hint'];
+      delete attrs.as;
+      delete attrs.wrapper_html;
+      delete attrs.input_html;
+      delete attrs.label;
+      delete attrs.url;
+      delete attrs.label_html;
+      delete attrs.hint;
       return this.createNode(attrs, true);
     };
 
@@ -334,7 +334,7 @@
       if (!field) {
         throw new Error("Required Parameter Missing: 'field'");
       }
-      return Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix || this.attrs['as']);
+      return Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix || this.attrs.as);
     };
 
 
@@ -349,7 +349,7 @@
       var fn, options;
       options = _.first(arguments);
       fn = _.last(arguments);
-      return new Formtastic.Inputs(options, fn, this.attrs['as']).render();
+      return new Formtastic.Inputs(options, fn, this.attrs.as).render();
     };
 
 
@@ -371,8 +371,8 @@
         tag: 'label',
         "class": Formtastic.default_label_class
       }, attrs);
-      required = cfg['required'];
-      delete cfg['required'];
+      required = cfg.required;
+      delete cfg.required;
       ele = this.createNode(cfg, true);
       ele.innerHTML = name + (required ? Formtastic.required_string : '');
       return ele.outerHTML;
@@ -481,9 +481,9 @@
       container = builder.wrapper;
       template = _.template(Formtastic.template);
       container.innerHTML = template({
-        input: builder['input'],
-        label: builder['label'],
-        hint: builder['hint'],
+        input: builder.input,
+        label: builder.label,
+        hint: builder.hint,
         attrs: this.attrs
       });
       return container.outerHTML;
@@ -509,7 +509,7 @@
     translate_field = function(field, attrs) {
       var as;
       attrs = _.extend({}, attrs);
-      as = attrs['as'];
+      as = attrs.as;
       if (as) {
         return as;
       }
@@ -517,7 +517,7 @@
         return 'password';
       } else if (/^.+\_id$/.test(field)) {
         return 'number';
-      } else if (typeof attrs['collection'] !== 'undefined' && attrs['collection'].length > 0) {
+      } else if (typeof attrs.collection !== 'undefined' && attrs.collection.length > 0) {
         return 'select';
       } else if (/^(.+)?(phone|fax)(\_.+)?$/.test(field)) {
         return 'phone';
@@ -613,9 +613,9 @@
       }, attrs);
       this.field = field;
       this.attrs = attrs;
-      this.as = attrs['as'];
-      this.required = attrs['required'];
-      this.prefix = attrs['prefix'];
+      this.as = attrs.as;
+      this.required = attrs.required;
+      this.prefix = attrs.prefix;
     }
 
 
@@ -670,7 +670,7 @@
       } catch (_error) {
 
       }
-      label_config = _.extend(defaults, this.attrs['label_html']);
+      label_config = _.extend(defaults, this.attrs.label_html);
       ele = this.createNode(label_config, true);
       ele.innerHTML = this.label_name() + (this.required ? Formtastic.required_string : '');
       if (dom) {
@@ -689,10 +689,10 @@
      */
 
     InputBase.prototype.label_name = function() {
-      if (this.attrs['label'] === false) {
+      if (this.attrs.label === false) {
         return;
       }
-      return this.attrs['label'] || humanize(this.field);
+      return this.attrs.label || humanize(this.field);
     };
 
 
@@ -715,9 +715,9 @@
       };
       defaults = _.extend(defaults, config);
       if (!this.required) {
-        delete defaults['required'];
+        delete defaults.required;
       }
-      input_config = _.extend(defaults, this.attrs['input_html']);
+      input_config = _.extend(defaults, this.attrs.input_html);
       ele = this.createNode(input_config, true);
       return ele.outerHTML;
     };
@@ -730,8 +730,8 @@
      */
 
     InputBase.prototype.input_name = function() {
-      if (this.attrs['input_html'] && this.attrs['input_html']['name']) {
-        return this.attrs['input_html']['name'];
+      if (this.attrs.input_html && this.attrs.input_html['name']) {
+        return this.attrs.input_html['name'];
       } else {
         if (this.prefix) {
           return _.template('<%= prefix %>[<%= name %>]')({
@@ -784,14 +784,14 @@
 
     InputBase.prototype.hint = function() {
       var hint;
-      if (!this.attrs['hint']) {
+      if (!this.attrs.hint) {
         return null;
       }
       hint = this.createNode({
         tag: Formtastic.default_hint_tag,
         "class": Formtastic.default_hint_class
       }, true);
-      hint.innerHTML = this.attrs['hint'];
+      hint.innerHTML = this.attrs.hint;
       return hint.outerHTML;
     };
 
@@ -816,7 +816,7 @@
         "class": wrapper_css,
         id: this.generated_id() + '_input'
       };
-      wrapper_config = _.extend(defaults, this.attrs['wrapper_html']);
+      wrapper_config = _.extend(defaults, this.attrs.wrapper_html);
       return this.createNode(wrapper_config, true);
     };
 
@@ -1087,7 +1087,7 @@
       _checked_value = (function(_this) {
         return function() {
           try {
-            return _this.attrs['checked_value'] || _this.attrs['value'] || _this.attrs['input_html']['value'];
+            return _this.attrs['checked_value'] || _this.attrs['value'] || _this.attrs.input_html['value'];
           } catch (_error) {
             return 1;
           }
@@ -1101,7 +1101,7 @@
       _hidden_field = (function(_this) {
         return function(defaults) {
           var hidden_config, input_cfg;
-          input_cfg = _.clone(_this.attrs['input_html']);
+          input_cfg = _.clone(_this.attrs.input_html);
           if (input_cfg) {
             delete input_cfg['checked'];
           }
@@ -1126,7 +1126,7 @@
       if (!this.required) {
         delete defaults['required'];
       }
-      input_config = _.extend(_.clone(defaults), this.attrs['input_html']);
+      input_config = _.extend(_.clone(defaults), this.attrs.input_html);
       checkbox = this.createNode(input_config);
       container = Formtastic.Input.Base.prototype.label.apply(this, [true]);
       container.innerHTML = checkbox + ' ' + this.label_name();
@@ -1153,7 +1153,7 @@
       input_html: {},
       attrs: attrs
     });
-    attrs['input_html']['type'] = 'checkbox';
+    attrs.input_html['type'] = 'checkbox';
     return this.input(field, attrs);
   };
 
@@ -1265,7 +1265,7 @@
         required: this.required,
         "class": this.constructor.default_input_class
       };
-      input_config = _.extend(defaults, this.attrs['input_html']);
+      input_config = _.extend(defaults, this.attrs.input_html);
       ele = this.createNode(input_config, true);
       option = (function(_this) {
         return function(item) {
@@ -1311,7 +1311,7 @@
 
   this.Formtastic.Inputs.select_field = function(field, attrs) {
     attrs = _.extend({}, attrs);
-    attrs['as'] = 'select';
+    attrs.as = 'select';
     return this.input(field, attrs);
   };
 
@@ -1363,7 +1363,7 @@
       input_html: {},
       attrs: attrs
     });
-    (base2 = attrs['input_html'])['type'] || (base2['type'] = 'text');
+    (base2 = attrs.input_html)['type'] || (base2['type'] = 'text');
     return this.input(field, attrs);
   };
 
@@ -1412,7 +1412,7 @@
       if (!this.required) {
         delete defaults['required'];
       }
-      input_config = _.extend(defaults, this.attrs['input_html']);
+      input_config = _.extend(defaults, this.attrs.input_html);
       value = input_config['value'];
       delete input_config['value'];
       delete input_config['type'];
@@ -1438,7 +1438,7 @@
 
   this.Formtastic.Inputs.textarea_field = function(field, attrs) {
     attrs = _.extend({}, attrs);
-    attrs['as'] = 'text';
+    attrs.as = 'text';
     return this.input(field, attrs);
   };
 

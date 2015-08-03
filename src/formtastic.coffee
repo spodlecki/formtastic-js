@@ -179,11 +179,14 @@ class Form
   @returns {String|DOMNode}
   @private
   ###
-  dom = (attributes, dom_node=false)->
+  dom = (attributes, dom_node)->
+    if typeof(dom_node) == 'undefined'
+      dom_node = false
+
     throw new Error("Can't create a DOM Node without a tag.") unless attributes.tag
 
     ele = document.createElement(attributes.tag)
-    delete attributes['tag']
+    delete attributes.tag
 
     for own key, value of attributes
       if typeof(value) != 'undefined' and value != null and value != ''
@@ -199,18 +202,18 @@ class Form
   @private
   ###
   form = (attrs)->
-    attrs['action'] ||= attrs['url']
+    attrs.action ||= attrs.url
     css_class = merge_css_strings(@constructor.default_form_class, attrs, 'class')
     delete attrs['class']
 
     attrs = _.extend({tag: 'form', action: @constructor.default_form_action, class: css_class}, attrs)
-    delete attrs['as']
-    delete attrs['wrapper_html']
-    delete attrs['input_html']
-    delete attrs['label']
-    delete attrs['url']
-    delete attrs['label_html']
-    delete attrs['hint']
+    delete attrs.as
+    delete attrs.wrapper_html
+    delete attrs.input_html
+    delete attrs.label
+    delete attrs.url
+    delete attrs.label_html
+    delete attrs.hint
     @createNode(attrs, true)
 
   constructor: (object, attrs, fn) ->
@@ -245,7 +248,7 @@ class Form
   ###
   input: (field, attributes, prefix) =>
     throw new Error("Required Parameter Missing: 'field'") unless field
-    Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix or @attrs['as'])
+    Formtastic.Input.Base.get_inputs_by_config(field, attributes, prefix or @attrs.as)
 
   ###*
   @method inputs
@@ -257,7 +260,7 @@ class Form
     options = _.first(arguments)
     fn = _.last(arguments)
 
-    new Formtastic.Inputs(options, fn, @attrs['as']).render()
+    new Formtastic.Inputs(options, fn, @attrs.as).render()
 
   ###*
   @method label
@@ -269,8 +272,8 @@ class Form
   label: (name, attrs)=>
     return null unless name
     cfg = _.extend({required: false, tag: 'label', class: Formtastic.default_label_class}, attrs)
-    required = cfg['required']
-    delete cfg['required']
+    required = cfg.required
+    delete cfg.required
 
     ele = @createNode(cfg, true)
     ele.innerHTML = name + (if required then Formtastic.required_string else '')

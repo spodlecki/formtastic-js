@@ -16,7 +16,7 @@ class BooleanFieldHelper extends Formtastic.Input.Base
   input: =>
     _checked_value = =>
       try
-        @attrs['checked_value'] || @attrs['value'] || @attrs['input_html']['value']
+        @attrs['checked_value'] || @attrs['value'] || @attrs.input_html['value']
       catch
         1
 
@@ -24,7 +24,7 @@ class BooleanFieldHelper extends Formtastic.Input.Base
       @attrs['unchecked_value'] || '0'
 
     _hidden_field = (defaults)=>
-      input_cfg = _.clone(@attrs['input_html'])
+      input_cfg = _.clone(@attrs.input_html)
       delete input_cfg['checked'] if input_cfg
       delete defaults['required']
       hidden_config = _.extend(defaults, {type: 'hidden', id: null, value: _unchecked_value()})
@@ -41,7 +41,7 @@ class BooleanFieldHelper extends Formtastic.Input.Base
 
     delete defaults['required'] unless @required
 
-    input_config = _.extend(_.clone(defaults), @attrs['input_html'])
+    input_config = _.extend(_.clone(defaults), @attrs.input_html)
     checkbox = @createNode(input_config)
     container = Formtastic.Input.Base.prototype.label.apply(this, [true])
     container.innerHTML = checkbox + ' ' + @label_name()
@@ -60,5 +60,5 @@ this.Formtastic.Input.BooleanFieldHelper = BooleanFieldHelper
 ###
 this.Formtastic.Inputs.check_box = (field, attrs)->
   attrs = _.extend({input_html: {}, attrs})
-  attrs['input_html']['type'] = 'checkbox'
+  attrs.input_html['type'] = 'checkbox'
   @input(field, attrs)
