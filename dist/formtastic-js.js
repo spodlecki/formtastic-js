@@ -733,8 +733,8 @@
      */
 
     InputBase.prototype.input_name = function() {
-      if (this.attrs.input_html && this.attrs.input_html['name']) {
-        return this.attrs.input_html['name'];
+      if (this.attrs.input_html && this.attrs.input_html.name) {
+        return this.attrs.input_html.name;
       } else {
         if (this.prefix) {
           return _.template('<%= prefix %>[<%= name %>]')({
@@ -772,8 +772,8 @@
      */
 
     InputBase.prototype.generated_id = function() {
-      if (this.attrs['id']) {
-        return this.attrs['id'];
+      if (this.attrs.id) {
+        return this.attrs.id;
       }
       return _.compact([this.prefix, this.field]).join('_').replace(/\[|\]/, '_').replace(/\s/, '');
     };
@@ -880,8 +880,8 @@
       if (_.isFunction(options)) {
         this.options = {};
       } else if (_.isObject(options)) {
-        options['name'] || (options['name'] = options['title']);
-        delete options['title'];
+        options.name || (options.name = options.title);
+        delete options.title;
         this.options = options;
       } else if (_.isString(options)) {
         this.options = {
@@ -964,13 +964,13 @@
 
     FormFieldset.prototype.legend = function() {
       var legend;
-      if (!this.options['name']) {
+      if (!this.options.name) {
         return '';
       }
       legend = this.createNode({
         tag: 'legend'
       }, true);
-      legend.innerHTML = this.options['name'];
+      legend.innerHTML = this.options.name;
       return legend.outerHTML;
     };
 
@@ -1090,7 +1090,7 @@
       _checked_value = (function(_this) {
         return function() {
           try {
-            return _this.attrs['checked_value'] || _this.attrs['value'] || _this.attrs.input_html['value'];
+            return _this.attrs.checked_value || _this.attrs.value || _this.attrs.input_html.value;
           } catch (_error) {
             return 1;
           }
@@ -1098,7 +1098,7 @@
       })(this);
       _unchecked_value = (function(_this) {
         return function() {
-          return _this.attrs['unchecked_value'] || '0';
+          return _this.attrs.unchecked_value || '0';
         };
       })(this);
       _hidden_field = (function(_this) {
@@ -1106,9 +1106,9 @@
           var hidden_config, input_cfg;
           input_cfg = _.clone(_this.attrs.input_html);
           if (input_cfg) {
-            delete input_cfg['checked'];
+            delete input_cfg.checked;
           }
-          delete defaults['required'];
+          delete defaults.required;
           hidden_config = _.extend(defaults, {
             type: 'hidden',
             id: null,
@@ -1127,7 +1127,7 @@
         value: _checked_value()
       };
       if (!this.required) {
-        delete defaults['required'];
+        delete defaults.required;
       }
       input_config = _.extend(_.clone(defaults), this.attrs.input_html);
       checkbox = this.createNode(input_config);
@@ -1413,7 +1413,7 @@
         id: this.generated_id()
       };
       if (!this.required) {
-        delete defaults['required'];
+        delete defaults.required;
       }
       input_config = _.extend(defaults, this.attrs.input_html);
       value = input_config['value'];
