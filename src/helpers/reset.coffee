@@ -1,4 +1,5 @@
 ###*
+Create a reset button
 @for Formtastic
 @method reset
 @param text {String} Button / Input Value

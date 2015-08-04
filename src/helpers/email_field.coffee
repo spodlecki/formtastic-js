@@ -1,4 +1,5 @@
 ###*
+Create e-mail field (HTML5)
 @for Formtastic
 @method email_field
 @param field {String} Name of the field

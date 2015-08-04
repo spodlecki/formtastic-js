@@ -1,4 +1,5 @@
 ###*
+Generates Cancel Button
 @for Formtastic
 @method cancel
 @param text {String} Button / Input Value

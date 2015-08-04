@@ -41,6 +41,8 @@
 
 
   /**
+  Generates Action Buttons (submit, reset, cancel)
+  
   @for Formtastic
   @method action
   @param type {String} submit|reset|cancel|commit
@@ -49,6 +51,11 @@
 
   FormtasticHelpers.action = function(type, attrs) {
     var cfg, ele, tag, text, validate;
+    attrs = _.extend({}, attrs);
+    attrs = _.extend(attrs, attrs.button_html);
+    attrs = _.extend(attrs, attrs.input_html);
+    delete attrs.button_html;
+    delete attrs.input_html;
     type = (function(type) {
       type = type || '';
       switch (type.toLowerCase()) {
@@ -110,6 +117,7 @@
     if (tag === 'a') {
       delete cfg.type;
     }
+    delete cfg.as;
     ele = this.createNode(cfg, true);
     if (tag === 'button') {
       ele.innerHTML = text;
@@ -124,6 +132,7 @@
 
 
   /**
+  Generates Cancel Button
   @for Formtastic
   @method cancel
   @param text {String} Button / Input Value
@@ -140,6 +149,7 @@
 
 
   /**
+  Generates a Checkbox
   @for Formtastic
   @method check_box
   @param field {String} Name of the field
@@ -155,6 +165,7 @@
 
 
   /**
+  Create e-mail field (HTML5)
   @for Formtastic
   @method email_field
   @param field {String} Name of the field
@@ -170,6 +181,7 @@
 
 
   /**
+  Create a file field
   @for Formtastic
   @method file_field
   @param field {String} Name of the field
@@ -185,8 +197,9 @@
 
 
   /**
+  Generate Hidden Field
   @for Formtastic
-  @method string_field
+  @method hidden_field
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
@@ -200,6 +213,7 @@
 
 
   /**
+  Add a html label
   @for Formtastic
   @method label
   @param field {String} Name of the field
@@ -225,6 +239,7 @@
 
 
   /**
+  Creates a number field (HTML5)
   @for Formtastic
   @method number_field
   @param field {String} Name of the field
@@ -240,6 +255,7 @@
 
 
   /**
+  Create a password field. if the field is named with 'password' this is automatically applied
   @for Formtastic
   @method password_field
   @param field {String} Name of the field
@@ -255,6 +271,7 @@
 
 
   /**
+  Create a reset button
   @for Formtastic
   @method reset
   @param text {String} Button / Input Value
@@ -271,6 +288,7 @@
 
 
   /**
+  Create a HTML5 Search Field. This is automatically set when a field is named 'search'
   @for Formtastic
   @method search_field
   @param field {String} Name of the field
@@ -286,8 +304,9 @@
 
 
   /**
+  Create a select drop down box
   @for Formtastic
-  @method select_field
+  @method select
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
@@ -301,6 +320,7 @@
 
 
   /**
+  Submit button
   @for Formtastic
   @method submit
   @param text {String} Button / Input Value
@@ -317,6 +337,7 @@
 
 
   /**
+  Add HTML5 'phone' Input
   @for Formtastic
   @method telephone_field
   @param field {String} Name of the field
@@ -332,6 +353,7 @@
 
 
   /**
+  Create <textarea>
   @for Formtastic
   @method text_area
   @param field {String} Name of the field
@@ -346,6 +368,7 @@
 
 
   /**
+  Create a normal input field (text)
   @for Formtastic
   @method text_field
   @param field {String} Name of the field
@@ -361,8 +384,9 @@
 
 
   /**
+  Create a URL Field (HTML5)
   @for Formtastic
-  @method text_field
+  @method url_field
   @param field {String} Name of the field
   @param attributes {Object} Field Attributes
    */
@@ -1546,6 +1570,7 @@
     extend1(SelectFieldHelper, superClass);
 
     function SelectFieldHelper(field, attributes, prefix) {
+      this._buildSelectOption = bind(this._buildSelectOption, this);
       this.input = bind(this.input, this);
       if (typeof attributes.collection === 'undefined') {
         throw new Error("Missing :collection for select box.");
@@ -1554,42 +1579,50 @@
     }
 
     SelectFieldHelper.prototype.input = function() {
-      var collection, defaults, ele, input_config, item, j, len, option;
-      collection = this.attrs.collection;
+      var collection, defaults, ele, input_config, item, j, len;
       defaults = {
+        placeholder: this.label_name(),
         tag: 'select',
         name: this.input_name(),
-        multiple: this.attrs.multiple,
-        required: this.required,
-        "class": Formtastic.default_input_class
+        "class": Formtastic.default_input_class,
+        id: this.generated_id(),
+        multiple: this.attrs.multiple
       };
+      collection = this.attrs.collection;
       input_config = _.extend(defaults, this.attrs.input_html);
       ele = this.createNode(input_config, true);
-      option = (function(_this) {
-        return function(item) {
-          var n;
-          n = _this.createNode({
-            tag: 'option'
-          }, true);
-          n.innerHTML = item.text;
-          if (_.isArray(item)) {
-            n.value = item[1];
-            n.innerHTML = item[0];
-          } else if (_.isObject(item)) {
-            n.value = item.value;
-            n.innerHTML = item.text;
-          } else {
-            n.value = item;
-            n.innerHTML = item;
-          }
-          return n.outerHTML;
-        };
-      })(this);
       for (j = 0, len = collection.length; j < len; j++) {
         item = collection[j];
-        ele.innerHTML = ele.innerHTML + option(item);
+        ele.innerHTML = ele.innerHTML + this._buildSelectOption(item);
       }
       return ele.outerHTML;
+    };
+
+    SelectFieldHelper.prototype._buildSelectOption = function(item) {
+      var n;
+      n = this.createNode({
+        tag: 'option'
+      }, true);
+      n.innerHTML = item.text;
+      if (_.isArray(item)) {
+        n.value = item[1];
+        n.innerHTML = item[0];
+      } else if (_.isObject(item)) {
+        n.value = item.value;
+        if (item.text) {
+          n.innerHTML = item.text;
+        } else if (item.label) {
+          n.innerHTML = item.label;
+        } else if (item.name) {
+          n.innerHTML = item.name;
+        } else {
+          item.value;
+        }
+      } else {
+        n.value = item;
+        n.innerHTML = item;
+      }
+      return n.outerHTML;
     };
 
     return SelectFieldHelper;

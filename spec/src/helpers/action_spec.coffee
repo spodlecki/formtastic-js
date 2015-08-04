@@ -42,6 +42,16 @@ describe '#action', ->
       # TODO: There is a notation to remove f.action from Formtastic. Not going into too much depth for this so skipping
       #       the wrapper part. The buttons will still display perfectly.
 
+    describe ':button_html option', ->
+      beforeEach ->
+        @form = $(new Formtastic({}, (f)-> f.action('submit', as: 'button', button_html: {class: 'hello'}) ).render())
+
+      it 'set the button class', ->
+        expect(@form.find('button').hasClass('hello')).toBeTruthy()
+
+      it 'does not have :as', ->
+        expect(@form.find('button').attr('as')).toBeUndefined()
+
     describe ':label option', ->
       describe 'without value', ->
         it 'gets first param humanized', ->

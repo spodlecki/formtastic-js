@@ -1,4 +1,5 @@
 ###*
+Add a html label
 @for Formtastic
 @method label
 @param field {String} Name of the field

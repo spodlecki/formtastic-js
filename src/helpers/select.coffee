@@ -1,6 +1,7 @@
 ###*
+Create a select drop down box
 @for Formtastic
-@method select_field
+@method select
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###

@@ -1,4 +1,5 @@
 ###*
+Create <textarea>
 @for Formtastic
 @method text_area
 @param field {String} Name of the field

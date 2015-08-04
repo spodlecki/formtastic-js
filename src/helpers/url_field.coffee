@@ -1,6 +1,7 @@
 ###*
+Create a URL Field (HTML5)
 @for Formtastic
-@method text_field
+@method url_field
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###

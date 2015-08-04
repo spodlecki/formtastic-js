@@ -1,4 +1,5 @@
 ###*
+Generates a Checkbox
 @for Formtastic
 @method check_box
 @param field {String} Name of the field

@@ -41,9 +41,9 @@ knownExamples['label_with_text'] = ((text)->
     expect(@el.find('form li label').text()).toEqual text
 )
 
-knownExamples['input_with_'] = ((field, value)->
+knownExamples['input_with_'] = ((field, value, input='input')->
   it 'has input with "'+field+'" equal to "'+value+'"', ->
-    expect(@el.find('form li input').attr(field)).toEqual value
+    expect(@el.find('form li '+input).attr(field)).toEqual value
 )
 
 knownExamples['form_helper'] = ((field, value, input='input')->

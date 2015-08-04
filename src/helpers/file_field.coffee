@@ -1,4 +1,5 @@
 ###*
+Create a file field
 @for Formtastic
 @method file_field
 @param field {String} Name of the field

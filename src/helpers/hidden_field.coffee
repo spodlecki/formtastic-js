@@ -1,6 +1,7 @@
 ###*
+Generate Hidden Field
 @for Formtastic
-@method string_field
+@method hidden_field
 @param field {String} Name of the field
 @param attributes {Object} Field Attributes
 ###

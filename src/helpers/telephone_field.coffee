@@ -1,4 +1,5 @@
 ###*
+Add HTML5 'phone' Input
 @for Formtastic
 @method telephone_field
 @param field {String} Name of the field

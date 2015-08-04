@@ -1,4 +1,5 @@
 ###*
+Creates a number field (HTML5)
 @for Formtastic
 @method number_field
 @param field {String} Name of the field

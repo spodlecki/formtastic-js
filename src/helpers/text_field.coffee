@@ -1,4 +1,5 @@
 ###*
+Create a normal input field (text)
 @for Formtastic
 @method text_field
 @param field {String} Name of the field

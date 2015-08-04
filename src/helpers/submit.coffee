@@ -1,4 +1,5 @@
 ###*
+Submit button
 @for Formtastic
 @method submit
 @param text {String} Button / Input Value
